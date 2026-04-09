@@ -1,0 +1,63 @@
+:root {
+  font-family:
+    'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #22324d;
+  background:
+    radial-gradient(circle at top, rgba(13, 110, 253, 0.14), transparent 28%),
+    linear-gradient(180deg, #f3f8ff, #eef6ff 45%, #f8fbff 100%);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --heading-color: #10203a;
+  --muted-color: #73819a;
+  --muted-strong: #50617f;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.38)),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0,
+      transparent 79px,
+      rgba(13, 110, 253, 0.03) 79px,
+      rgba(13, 110, 253, 0.03) 80px
+    );
+  pointer-events: none;
+  z-index: -1;
+}
+
+a,
+button {
+  font: inherit;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+#root {
+  min-height: 100vh;
+}
