@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { appRoutes } from '../../router'
 
 function SiteHeader({ navItems }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -28,13 +30,13 @@ function SiteHeader({ navItems }) {
   return (
     <header className="site-header-wrap">
       <div className="site-header section-container">
-        <div className="brand-lockup">
+        <Link to={appRoutes.home} className="brand-lockup">
           <div className="brand-mark">TQ</div>
           <div className="brand-text">
             <p className="brand-name">天启 IP</p>
             <p className="brand-subtitle">全球高质量代理服务</p>
           </div>
-        </div>
+        </Link>
 
         <button
           type="button"
@@ -58,12 +60,15 @@ function SiteHeader({ navItems }) {
         </nav>
 
         <div className="header-actions desktop-actions">
-          <a href="#!" className="ghost-button">
-            控制台
-          </a>
-          <a href="#plans" className="primary-button">
-            免费试用
-          </a>
+          <Link to={appRoutes.userCenter} className="ghost-button">
+            用户中心
+          </Link>
+          <Link to={appRoutes.login} className="ghost-button">
+            用户登录
+          </Link>
+          <Link to={appRoutes.register} className="primary-button">
+            立即注册
+          </Link>
         </div>
       </div>
 
@@ -80,12 +85,23 @@ function SiteHeader({ navItems }) {
         </nav>
 
         <div className="header-actions mobile-actions">
-          <a href="#!" className="ghost-button" onClick={() => setIsMenuOpen(false)}>
-            控制台
-          </a>
-          <a href="#plans" className="primary-button" onClick={() => setIsMenuOpen(false)}>
-            免费试用
-          </a>
+          <Link
+            to={appRoutes.userCenter}
+            className="ghost-button"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            用户中心
+          </Link>
+          <Link to={appRoutes.login} className="ghost-button" onClick={() => setIsMenuOpen(false)}>
+            用户登录
+          </Link>
+          <Link
+            to={appRoutes.register}
+            className="primary-button"
+            onClick={() => setIsMenuOpen(false)}
+          >
+            立即注册
+          </Link>
         </div>
       </div>
     </header>

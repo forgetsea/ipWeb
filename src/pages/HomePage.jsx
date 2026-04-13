@@ -1,12 +1,12 @@
-import SiteHeader from '../components/SiteHeader'
-import HeroSection from '../components/HeroSection'
-import SceneStrip from '../components/SceneStrip'
-import FeaturesSection from '../components/FeaturesSection'
-import PlansSection from '../components/PlansSection'
-import EnterpriseSection from '../components/EnterpriseSection'
-import BrandsSection from '../components/BrandsSection'
-import NewsSection from '../components/NewsSection'
-import SiteFooter from '../components/SiteFooter'
+import BrandsSection from '../components/home/BrandsSection'
+import EnterpriseSection from '../components/home/EnterpriseSection'
+import FeaturesSection from '../components/home/FeaturesSection'
+import HeroSection from '../components/home/HeroSection'
+import NewsSection from '../components/home/NewsSection'
+import PlansSection from '../components/home/PlansSection'
+import SceneStrip from '../components/home/SceneStrip'
+import SiteFooter from '../components/layout/SiteFooter'
+import SiteHeader from '../components/layout/SiteHeader'
 import {
   articleItems,
   enterpriseMetrics,

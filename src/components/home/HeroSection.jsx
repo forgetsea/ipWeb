@@ -1,3 +1,6 @@
+import { Link } from 'react-router-dom'
+import { appRoutes } from '../../router'
+
 function HeroSection({ stats }) {
   return (
     <section className="hero-section section-container">
@@ -9,12 +12,12 @@ function HeroSection({ stats }) {
         </p>
 
         <div className="hero-actions">
-          <a href="#plans" className="primary-button">
-            查看套餐
-          </a>
-          <a href="#contact" className="ghost-button strong">
-            企业咨询
-          </a>
+          <Link to={appRoutes.register} className="primary-button">
+            注册账号
+          </Link>
+          <Link to={appRoutes.login} className="ghost-button strong">
+            立即登录
+          </Link>
         </div>
 
         <dl className="hero-stats">

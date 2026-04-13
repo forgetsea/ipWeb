@@ -1,4 +1,4 @@
-import SectionHeading from './SectionHeading'
+import SectionHeading from '../common/SectionHeading'
 
 function NewsSection({ articles }) {
   return (

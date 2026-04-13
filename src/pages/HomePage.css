@@ -1,5 +1,8 @@
 .home-page {
   padding: 104px 0 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
 }
 
 .home-main {
@@ -36,6 +39,8 @@
   align-items: center;
   gap: 14px;
   flex-shrink: 0;
+  color: inherit;
+  text-decoration: none;
 }
 
 .brand-text {
@@ -380,7 +385,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 100vw;
+  width: max(0px, calc((100vw - 100%) / 2));
   background: rgba(8, 23, 58, 0.94);
   z-index: -1;
 }
@@ -553,7 +558,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 100vw;
+  width: max(0px, calc((100vw - 100%) / 2));
   background:
     radial-gradient(circle at 12% 18%, rgba(118, 203, 255, 0.18), transparent 24%),
     radial-gradient(circle at 84% 22%, rgba(70, 235, 189, 0.16), transparent 20%),
@@ -731,7 +736,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 100vw;
+  width: max(0px, calc((100vw - 100%) / 2));
   background:
     linear-gradient(180deg, rgba(8, 23, 58, 0.96), rgba(11, 30, 70, 0.98)),
     linear-gradient(135deg, #0d6efd, #16b39a);
