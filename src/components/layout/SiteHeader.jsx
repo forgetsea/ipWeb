@@ -31,10 +31,10 @@ function SiteHeader({ navItems }) {
     <header className="site-header-wrap">
       <div className="site-header section-container">
         <Link to={appRoutes.home} className="brand-lockup">
-          <div className="brand-mark">TQ</div>
+          <div className="brand-mark">QJ</div>
           <div className="brand-text">
-            <p className="brand-name">天启 IP</p>
-            <p className="brand-subtitle">全球高质量代理服务</p>
+            <p className="brand-name">奇迹 IP</p>
+            <p className="brand-subtitle">一站式企业级 IP 代理服务平台</p>
           </div>
         </Link>
 

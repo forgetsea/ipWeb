@@ -4,9 +4,9 @@ function EnterpriseSection({ metrics }) {
       <div className="enterprise-panel section-container">
         <div className="enterprise-copy">
           <span className="eyebrow">企业定制</span>
-          <h2>如果你想继续提高还原度，这一块最适合接入真实品牌素材</h2>
+          <h2>企业级 IP 代理解决方案，为业务增长保驾护航</h2>
           <p>
-            当前版本先用可维护的 React 结构完成整体页面骨架。后续你只要补上官网原图、图标和真实文案，就能继续往 1:1 靠近。
+            专为企业量身定制的 IP 代理服务，提供全球化网络访问解决方案，助力企业数字化转型。
           </p>
           <a href="#!" className="primary-button">
             联系商务

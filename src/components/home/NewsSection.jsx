@@ -4,9 +4,9 @@ function NewsSection({ articles }) {
   return (
     <section className="section-block news-layout section-container">
       <SectionHeading
-        eyebrow="资讯中心"
-        title="底部资讯列表区"
-        description="这一段对应官网常见的 SEO 内容布局，适合后续接 CMS 或静态文章数据。"
+        eyebrow="安全合规"
+        title="安全合规是我们的承诺"
+        description="奇迹 IP 始终坚守安全合规原则，致力于提供安全、稳定、优质的大数据代理服务，保障用户合法权益，推动全球大数据业务的健康有序发展。"
       />
 
       <div className="news-list">
@@ -14,7 +14,7 @@ function NewsSection({ articles }) {
           <article key={article} className="news-card">
             <span>{String(index + 1).padStart(2, '0')}</span>
             <h3>{article}</h3>
-            <a href="#!">查看详情</a>
+            <a href="#!">了解更多</a>
           </article>
         ))}
       </div>

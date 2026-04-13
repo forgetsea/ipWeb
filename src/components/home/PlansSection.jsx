@@ -5,8 +5,8 @@ function PlansSection({ plans }) {
     <section className="section-block section-container" id="plans">
       <SectionHeading
         eyebrow="热门套餐"
-        title="常见首页套餐展示"
-        description="采用三列价格卡结构，便于后续你继续替换为真实套餐、折扣与购买链接。"
+        title="精选服务套餐，省心更划算"
+        description="灵活的计费方式，为多场景适配设计，满足多元业务需求。"
       />
 
       <div className="plans-grid">

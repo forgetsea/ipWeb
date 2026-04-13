@@ -4,9 +4,9 @@ function FeaturesSection({ items }) {
   return (
     <section className="section-block section-container">
       <SectionHeading
-        eyebrow="核心优势"
-        title="还原原站首页常见的能力展示区块"
-        description="通过大色块、轻玻璃卡片和密集信息分层，复刻营销型代理服务网站的首页表达方式。"
+        eyebrow="产品介绍"
+        title="专业优质的海外 IP 代理服务"
+        description="覆盖静态住宅、动态住宅与动态 IDC 代理，满足跨境业务、数据业务与企业网络访问需求。"
       />
 
       <div className="feature-grid">
@@ -14,7 +14,11 @@ function FeaturesSection({ items }) {
           <article key={feature.title} className="feature-card">
             <div className="feature-icon" />
             <h3>{feature.title}</h3>
-            <p>{feature.description}</p>
+            <ul className="feature-bullets">
+              {feature.bullets.map((bullet) => (
+                <li key={bullet}>{bullet}</li>
+              ))}
+            </ul>
           </article>
         ))}
       </div>
