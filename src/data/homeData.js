@@ -66,7 +66,7 @@ export const articleItems = [
 
 export const heroStats = [
   { value: '99.9%', label: '可用率支持' },
-  { value: '5000万+', label: '可调用代理资源' },
+  { value: '200+', label: '覆盖国家地区' },
   { value: '24h', label: '安全健康守护' },
 ]
 

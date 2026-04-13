@@ -29,8 +29,8 @@ function HomePage() {
         <FeaturesSection items={featureItems} />
         <PlansSection plans={planItems} />
         <EnterpriseSection metrics={enterpriseMetrics} />
-        <BrandsSection logos={logoItems} />
         <NewsSection articles={articleItems} />
+        <BrandsSection logos={logoItems} />
       </main>
       <SiteFooter />
     </div>
