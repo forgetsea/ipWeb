@@ -974,23 +974,183 @@
 
 .news-layout {
   display: grid;
-  grid-template-columns: 0.95fr 1.05fr;
-  gap: 20px;
+  grid-template-columns: minmax(0, 0.76fr) minmax(0, 1.24fr);
+  align-items: start;
+  gap: 28px;
+  padding-top: 36px;
+}
+
+.news-layout::before {
+  opacity: 0.24;
+}
+
+.news-layout .section-heading {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  max-width: none;
+  margin-bottom: 0;
+  padding-top: 0;
+}
+
+.news-layout .eyebrow {
+  align-self: flex-start;
+  padding: 7px 12px;
+  background: #1677ff;
+  color: #ffffff;
+  letter-spacing: 0;
+}
+
+.news-layout .section-heading h2 {
+  margin: 6px 0 12px;
+  color: #0f2b67;
+  font-size: 32px;
+  line-height: 1.2;
+}
+
+.news-layout .section-heading p {
+  max-width: 44ch;
+  margin: 0;
+  color: var(--muted-strong);
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 .news-list {
-  grid-template-columns: 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  grid-auto-rows: 1fr;
+  gap: 32px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(22, 119, 255, 0.035), rgba(22, 179, 154, 0.025));
 }
 
 .news-card {
   display: grid;
-  gap: 10px;
+  grid-template-rows: 32px 72px 44px 22px;
+  gap: 12px;
+  min-width: 0;
+  min-height: 242px;
+  height: 242px;
+  padding: 24px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid rgba(22, 119, 255, 0.12);
+  border-left: 4px solid #1677ff;
+  box-shadow: 0 12px 32px rgba(16, 47, 102, 0.1);
+  transition:
+    transform 180ms ease,
+    box-shadow 180ms ease,
+    background-color 180ms ease,
+    border-color 180ms ease;
+}
+
+.news-card:hover,
+.news-card:focus-within {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 44px rgba(16, 47, 102, 0.16);
+}
+
+.news-card.is-primary {
+  background: #1677ff;
+  border-color: rgba(22, 119, 255, 0.2);
+  box-shadow: 0 18px 44px rgba(22, 119, 255, 0.24);
+}
+
+.news-card.is-primary:hover,
+.news-card.is-primary:focus-within {
+  background: #2382ff;
+  box-shadow: 0 24px 52px rgba(22, 119, 255, 0.32);
+}
+
+.news-card .news-card-index {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: #1677ff;
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.news-card.is-primary .news-card-index {
+  background: #ffffff;
+  color: #1677ff;
+  box-shadow: 0 10px 24px rgba(15, 43, 103, 0.16);
+}
+
+.news-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+}
+
+.news-card .news-card-icon {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: #1677ff;
+  flex: 0 0 auto;
+}
+
+.news-card-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.9;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.news-card.is-primary .news-card-icon {
+  color: #ffffff;
+}
+
+.news-card h3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
+  color: var(--heading-color);
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1.08;
+}
+
+.news-card h3 span {
+  display: block;
+  color: inherit;
+}
+
+.news-card-description {
+  margin: 0;
+  color: var(--muted-color);
+  font-size: 14px;
+  line-height: 1.45;
+  overflow: hidden;
 }
 
 .news-card a {
-  color: #0d6efd;
+  align-self: end;
+  justify-self: start;
+  flex: 0 0 auto;
+  color: #1677ff;
+  font-size: 14px;
   font-weight: 700;
+  line-height: 1.5;
   text-decoration: none;
+}
+
+.news-card.is-primary h3,
+.news-card.is-primary .news-card-description,
+.news-card.is-primary .news-card a {
+  color: #ffffff;
 }
 
 .site-footer {
@@ -1169,6 +1329,23 @@
   .enterprise-advantage-title {
     text-align: center;
   }
+
+  .news-layout {
+    gap: 24px;
+  }
+
+  .news-layout .section-heading {
+    justify-content: flex-start;
+  }
+
+  .news-list {
+    grid-template-columns: 1fr;
+    background: linear-gradient(135deg, rgba(22, 119, 255, 0.05), rgba(22, 179, 154, 0.035));
+  }
+
+  .news-card {
+    min-height: 112px;
+  }
 }
 
 @media (max-width: 900px) {
@@ -1282,6 +1459,19 @@
   .section-block,
   .site-footer {
     padding-top: 20px;
+  }
+
+  .news-layout {
+    padding-top: 24px;
+  }
+
+  .news-layout .section-heading h2 {
+    font-size: clamp(1.75rem, 8vw, 2rem);
+  }
+
+  .news-card {
+    grid-template-columns: 1fr;
+    min-height: 242px;
   }
 
   .brand-lockup {

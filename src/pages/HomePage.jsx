@@ -25,8 +25,8 @@ function HomePage() {
       <SiteHeader navItems={navItems} />
       <main className="home-main">
         <HeroSection stats={heroStats} />
-        <SceneStrip scenes={sceneItems} />
         <FeaturesSection items={featureItems} />
+        <SceneStrip scenes={sceneItems} />
         <PlansSection plans={planItems} />
         <EnterpriseSection metrics={enterpriseMetrics} />
         <NewsSection articles={articleItems} />
