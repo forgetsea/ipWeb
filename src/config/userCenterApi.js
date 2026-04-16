@@ -19,7 +19,7 @@ export const vendorApiReference = {
   accountInfo: `${VENDOR_ACCOUNT_API_BASE}/getinfo.act`,
   updatePassword: `${VENDOR_ACCOUNT_API_BASE}/update_password.act`,
   updateAccountStatus: `${VENDOR_ACCOUNT_API_BASE}/update_password.act`,
-  updateOrderSettings: `${VENDOR_ACCOUNT_API_BASE}/update_set.act`,
+  updateOrderSettings: `${VENDOR_ACCOUNT_API_BASE}/create_user.act`,
   updateDailyLimit: `${VENDOR_ACCOUNT_API_BASE}/update_setlimit.act`,
   whitelist: `${VENDOR_ACCOUNT_API_BASE}/white_op.act`,
   usage: `${VENDOR_ACCOUNT_API_BASE}/getUserLeftNum.act`,

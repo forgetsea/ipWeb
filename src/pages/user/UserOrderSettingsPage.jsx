@@ -43,7 +43,7 @@ function UserOrderSettingsPage() {
       <div className="user-section-title">
         <div>
           <p>Order</p>
-          <h2>订单返回设置</h2>
+          <h2>创建订单账户</h2>
         </div>
         <span>当前上限：{account.dayfetchlimit}</span>
       </div>
