@@ -1,8 +1,9 @@
 import SectionHeading from '../common/SectionHeading'
+import SectionShell from '../common/SectionShell'
 
 function FeaturesSection({ items }) {
   return (
-    <section className="section-block section-container">
+    <SectionShell>
       <SectionHeading
         eyebrow="产品介绍"
         title="专业优质的海外 IP 代理服务"
@@ -11,7 +12,7 @@ function FeaturesSection({ items }) {
 
       <div className="feature-grid">
         {items.map((feature) => (
-          <article key={feature.title} className="feature-card">
+          <article key={feature.title} className="home-card feature-card">
             <div className="feature-icon" />
             <h3>{feature.title}</h3>
             <ul className="feature-bullets">
@@ -22,7 +23,7 @@ function FeaturesSection({ items }) {
           </article>
         ))}
       </div>
-    </section>
+    </SectionShell>
   )
 }
 

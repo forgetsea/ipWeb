@@ -1,8 +1,9 @@
 import SectionHeading from '../common/SectionHeading'
+import SectionShell from '../common/SectionShell'
 
 function PlansSection({ plans }) {
   return (
-    <section className="section-block section-container" id="plans">
+    <SectionShell id="plans">
       <SectionHeading
         eyebrow="热门套餐"
         title="精选服务套餐，省心更划算"
@@ -11,7 +12,7 @@ function PlansSection({ plans }) {
 
       <div className="plans-grid">
         {plans.map((plan) => (
-          <article key={plan.name} className="plan-card">
+          <article key={plan.name} className="home-card plan-card">
             <p className="plan-name">{plan.name}</p>
             <div className="plan-price">
               <strong>{plan.price}</strong>
@@ -28,7 +29,7 @@ function PlansSection({ plans }) {
           </article>
         ))}
       </div>
-    </section>
+    </SectionShell>
   )
 }
 

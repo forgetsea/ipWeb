@@ -33,8 +33,8 @@ const statIcons = ['稳', '源', '护']
 
 function HeroSection({ stats }) {
   return (
-    <section className="hero-section section-container">
-      <div className="hero-copy">
+    <section className="hero-section emphasis-section section-container">
+      <div className="hero-copy emphasis-copy">
         <span className="eyebrow hero-eyebrow">
           <img src={rocket} alt="" className="hero-eyebrow-icon" />
           赋能未来 链接世界
@@ -58,11 +58,11 @@ function HeroSection({ stats }) {
         </div>
       </div>
 
-      <div className="hero-visual">
+      <div className="hero-visual emphasis-aside">
         <p className="service-section-title">核心服务</p>
         <div className="visual-grid">
           {serviceCards.map((service) => (
-            <article key={service.title} className={`visual-card is-${service.tone}`}>
+            <article key={service.title} className={`home-card visual-card is-${service.tone}`}>
               <span className="service-icon" aria-hidden="true">
                 {service.icon}
               </span>
@@ -75,7 +75,7 @@ function HeroSection({ stats }) {
 
       <dl className="hero-stats">
         {stats.map((item, index) => (
-          <div key={item.label} className={index === 0 ? 'is-primary' : undefined}>
+          <div key={item.label} className={`metric-card${index === 0 ? ' is-primary' : ''}`}>
             <span className="stat-icon" aria-hidden="true">
               {statIcons[index]}
             </span>

@@ -1,4 +1,5 @@
 import SectionHeading from '../common/SectionHeading'
+import SectionShell from '../common/SectionShell'
 
 const articleDetails = [
   {
@@ -35,7 +36,7 @@ const articleDetails = [
 
 function NewsSection({ articles }) {
   return (
-    <section className="section-block news-layout section-container">
+    <SectionShell className="news-layout">
       <SectionHeading
         eyebrow="安全合规"
         title="安全合规是我们的承诺"
@@ -47,7 +48,7 @@ function NewsSection({ articles }) {
           const detail = articleDetails[index] ?? articleDetails[0]
 
           return (
-            <article key={article} className={`news-card`}>
+            <article key={article} className="home-card news-card">
               <div className="news-card-top">
                 <span className="news-card-index">{String(index + 1).padStart(2, '0')}</span>
                 <span className="news-card-icon">{detail.icon}</span>
@@ -65,7 +66,7 @@ function NewsSection({ articles }) {
           )
         })}
       </div>
-    </section>
+    </SectionShell>
   )
 }
 

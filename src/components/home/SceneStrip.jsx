@@ -1,6 +1,6 @@
 function SceneStrip({ scenes }) {
   return (
-    <section className="trust-strip section-container">
+    <section className="scene-strip section-container">
       <p>满足广泛应用场景需求</p>
       <div>
         {scenes.map((scene) => (

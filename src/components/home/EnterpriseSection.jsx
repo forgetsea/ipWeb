@@ -20,8 +20,8 @@ const metricIcons = [
 function EnterpriseSection({ metrics }) {
   return (
     <section className="enterprise-band" id="contact">
-      <div className="enterprise-panel section-container">
-        <div className="enterprise-copy">
+      <div className="enterprise-panel emphasis-section section-container">
+        <div className="enterprise-copy emphasis-copy">
           <span className="eyebrow">企业定制</span>
           <h2>
             企业级 IP 代理解决方案
@@ -36,11 +36,14 @@ function EnterpriseSection({ metrics }) {
           </a>
         </div>
 
-        <div className="enterprise-advantage">
+        <div className="enterprise-advantage emphasis-aside">
           <p className="enterprise-advantage-title">核心优势</p>
           <div className="enterprise-metrics">
             {metrics.map((metric, index) => (
-              <div key={metric.label} className={index === 0 ? 'is-primary' : undefined}>
+              <div
+                key={metric.label}
+                className={`metric-card enterprise-metric-card${index === 0 ? ' is-primary' : ''}`}
+              >
                 <span className="enterprise-metric-icon" aria-hidden="true">
                   {metricIcons[index]}
                 </span>
