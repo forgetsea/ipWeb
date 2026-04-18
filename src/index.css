@@ -1,3 +1,5 @@
+/* 文件用途：全站基础样式，定义字体、背景、颜色变量和元素默认行为。 */
+
 :root {
   font-family:
     'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;

@@ -1,6 +1,8 @@
+// 文件用途：首页安全合规区，展示平台合规与稳定性承诺。
 import SectionHeading from '../common/SectionHeading'
 import SectionShell from '../common/SectionShell'
 
+// 模块功能：补充安全合规卡片的标题、描述和图标。
 const articleDetails = [
   {
     titleLines: ['100%', '合规运营'],
@@ -34,6 +36,7 @@ const articleDetails = [
   },
 ]
 
+// 模块功能：把安全合规数据渲染为编号卡片列表。
 function NewsSection({ articles }) {
   return (
     <SectionShell className="news-layout">

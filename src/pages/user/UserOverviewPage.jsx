@@ -1,7 +1,9 @@
+// 文件用途：用户中心账户概览页，展示提取额度、会话和白名单摘要。
 import { fetchUsage } from '../../services/userCenterService'
 import { ipTypeOptions } from './userCenterData'
 import { useUserCenter } from './useUserCenter'
 
+// 模块功能：读取共享账户状态，并支持手动刷新提取余量。
 function UserOverviewPage() {
   const { account, isSubmitting, requireCredentials, runAction } = useUserCenter()
 

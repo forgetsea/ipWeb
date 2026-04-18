@@ -1,3 +1,6 @@
+// 文件用途：集中维护页面路径常量，避免组件里手写重复 URL。
+
+// 模块功能：为导航、按钮和路由配置提供统一的路径来源。
 export const appRoutes = {
   home: '/',
   login: '/login',

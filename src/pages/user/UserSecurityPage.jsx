@@ -1,8 +1,10 @@
+// 文件用途：用户中心安全设置页，处理密码修改和账户开关。
 import { useState } from 'react'
 import { updateAccountStatus, updatePassword } from '../../services/userCenterService'
 import { initialPasswordForm } from './userCenterData'
 import { useUserCenter } from './useUserCenter'
 
+// 模块功能：校验新密码、提交密码修改，并同步账户启停状态。
 function UserSecurityPage() {
   const { account, setAccount, isSubmitting, requireCredentials, runAction, setStatus, updateForm } =
     useUserCenter()

@@ -1,6 +1,8 @@
+// 文件用途：首页热门套餐区，展示套餐价格和卖点。
 import SectionHeading from '../common/SectionHeading'
 import SectionShell from '../common/SectionShell'
 
+// 模块功能：把套餐数据渲染为可咨询的价格卡片。
 function PlansSection({ plans }) {
   return (
     <SectionShell id="plans">

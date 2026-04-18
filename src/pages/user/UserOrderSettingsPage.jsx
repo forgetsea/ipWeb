@@ -1,8 +1,10 @@
+// 文件用途：用户中心订单设置页，配置订单返回字段、格式和每日上限。
 import { useState } from 'react'
 import { updateDailyLimit, updateOrderSettings } from '../../services/userCenterService'
 import { initialLimitForm, initialSettingsForm, ipTypeOptions, visibilityFields } from './userCenterData'
 import { useUserCenter } from './useUserCenter'
 
+// 模块功能：提交供应商订单字段设置和每日提取限制。
 function UserOrderSettingsPage() {
   const { account, isSubmitting, requireCredentials, runAction, updateForm } = useUserCenter()
   const [settingsForm, setSettingsForm] = useState(initialSettingsForm)

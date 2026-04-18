@@ -1,7 +1,9 @@
+// 文件用途：首页首屏组件，展示主标语、核心服务卡片和关键指标。
 import { Link } from 'react-router-dom'
 import { appRoutes } from '../../router'
 import rocket from '../../assets/rocket.png'
 
+// 模块功能：首屏右侧核心服务卡片数据。
 const serviceCards = [
   {
     icon: '全',
@@ -29,8 +31,10 @@ const serviceCards = [
   },
 ]
 
+// 模块功能：为首屏指标卡片提供简短视觉标识。
 const statIcons = ['稳', '源', '护']
 
+// 模块功能：渲染首页首屏的行动入口、服务摘要和平台指标。
 function HeroSection({ stats }) {
   return (
     <section className="hero-section emphasis-section section-container">

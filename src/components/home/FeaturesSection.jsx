@@ -1,6 +1,8 @@
+// 文件用途：首页产品介绍区，展示不同代理产品的能力说明。
 import SectionHeading from '../common/SectionHeading'
 import SectionShell from '../common/SectionShell'
 
+// 模块功能：把产品数据渲染为多列能力卡片。
 function FeaturesSection({ items }) {
   return (
     <SectionShell>

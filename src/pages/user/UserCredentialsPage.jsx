@@ -1,5 +1,7 @@
+// 文件用途：用户中心 API 凭据页，录入供应商账号和调用密码。
 import { useUserCenter } from './useUserCenter'
 
+// 模块功能：保存凭据输入，并提供刷新账户和查询余量入口。
 function UserCredentialsPage() {
   const {
     credentialForm,

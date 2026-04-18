@@ -1,3 +1,4 @@
+// 文件用途：登录和注册共用页面，按 mode 切换字段、文案和提交接口。
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import AuthForm from '../../components/auth/AuthForm'
@@ -10,6 +11,7 @@ import { loginUser, registerUser } from '../../services/authService'
 import '../../pages/HomePage.css'
 import '../AuthPage.css'
 
+// 登录和注册共用同一个页面骨架，只用配置区分字段、接口和文案。
 const pageContent = {
   login: {
     eyebrow: 'User Access',
@@ -61,6 +63,7 @@ const initialValues = {
   confirmPassword: '',
 }
 
+// 模块功能：处理认证表单状态、基础校验、提交请求和结果提示。
 function AuthPage({ mode }) {
   const content = pageContent[mode] ?? pageContent.login
   const [formValues, setFormValues] = useState(initialValues)

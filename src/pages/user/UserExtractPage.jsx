@@ -1,8 +1,10 @@
+// 文件用途：用户中心 IP 提取测试页，按数量和地区编码提交提取请求。
 import { useState } from 'react'
 import { extractIp } from '../../services/userCenterService'
 import { initialExtractForm } from './userCenterData'
 import { useUserCenter } from './useUserCenter'
 
+// 模块功能：把页面表单字段转换为供应商提取接口需要的参数。
 function UserExtractPage() {
   const { isSubmitting, requireCredentials, runAction, updateForm } = useUserCenter()
   const [extractForm, setExtractForm] = useState(initialExtractForm)

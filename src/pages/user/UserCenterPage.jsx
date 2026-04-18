@@ -1,3 +1,4 @@
+// 文件用途：用户中心父页面，维护共享账户状态并承载子路由。
 import { Outlet } from 'react-router-dom'
 import { useState } from 'react'
 import SiteFooter from '../../components/layout/SiteFooter'
@@ -13,12 +14,14 @@ import {
 import '../HomePage.css'
 import './UserCenterPage.css'
 
+// 模块功能：管理用户中心的凭据、账户、提交状态，并通过 Outlet context 下发。
 function UserCenterPage() {
   const [credentialForm, setCredentialForm] = useState(initialCredentialForm)
   const [account, setAccount] = useState(sampleAccount)
   const [status, setStatus] = useState({ type: 'idle', message: '' })
   const [isSubmitting, setIsSubmitting] = useState('')
 
+  // 子页面表单很多，抽出通用 change handler，保持字段名和 state key 一致即可复用。
   const updateForm = (setter) => (event) => {
     const { name, value } = event.target
 
@@ -28,6 +31,7 @@ function UserCenterPage() {
     }))
   }
 
+  // 用户中心的接口大多依赖供应商账号和调用密码，提交前统一校验。
   const requireCredentials = () => {
     if (!credentialForm.username.trim() || !credentialForm.password.trim()) {
       setStatus({ type: 'error', message: '请先填写 API 账户和调用密码。' })
@@ -40,6 +44,7 @@ function UserCenterPage() {
     }
   }
 
+  // 集中处理按钮 loading、成功/失败提示和账户数据回写，避免每个子页面重复 try/catch。
   const runAction = async ({ key, action, successMessage, updateAccount = false }) => {
     setIsSubmitting(key)
     setStatus({ type: 'idle', message: '' })
@@ -94,6 +99,7 @@ function UserCenterPage() {
   const accountStatusText = account.isLocked === '0' ? '正常' : '已关闭'
   const accountTypeText = account.usertype === '0' ? '包月包天' : '次数用户'
 
+  // 通过 react-router 的 Outlet context 向所有用户中心子路由共享状态和动作。
   const outletContext = {
     account,
     credentialForm,

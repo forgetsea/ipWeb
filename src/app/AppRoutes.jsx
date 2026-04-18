@@ -1,3 +1,4 @@
+// 文件用途：集中声明全站页面路由与用户中心嵌套路由。
 import { Navigate, Route, Routes } from 'react-router-dom'
 import HomePage from '../pages/HomePage'
 import LoginPage from '../pages/auth/LoginPage'
@@ -13,6 +14,7 @@ import UserProfilePage from '../pages/user/UserProfilePage'
 import UserSecurityPage from '../pages/user/UserSecurityPage'
 import UserWhitelistPage from '../pages/user/UserWhitelistPage'
 
+// 模块功能：把 URL 路径映射到页面组件，并处理默认跳转与兜底重定向。
 function AppRoutes() {
   return (
     <Routes>
@@ -20,6 +22,7 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/user-center" element={<UserCenterPage />}>
+        {/* 用户中心共用同一份账户、凭据和提交状态，由 Workspace 再分发给子页面。 */}
         <Route element={<UserCenterWorkspace />}>
           <Route index element={<Navigate to="overview" replace />} />
           <Route path="credentials" element={<UserCredentialsPage />} />

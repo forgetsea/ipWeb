@@ -1,9 +1,11 @@
+// 文件用途：用户中心基础资料页，维护用户展示信息和联系方式。
 import { useState } from 'react'
 import { userCenterApi } from '../../config/userCenterApi'
 import { updateProfile } from '../../services/userCenterService'
 import { initialProfileForm } from './userCenterData'
 import { useUserCenter } from './useUserCenter'
 
+// 模块功能：提交基础资料到后端预留接口。
 function UserProfilePage() {
   const { isSubmitting, runAction, updateForm } = useUserCenter()
   const [profileForm, setProfileForm] = useState(initialProfileForm)

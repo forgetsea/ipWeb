@@ -1,8 +1,10 @@
+// 文件用途：用户中心白名单页，管理允许访问接口的 IP 地址。
 import { useState } from 'react'
 import { updateWhitelist } from '../../services/userCenterService'
 import { initialWhitelistForm } from './userCenterData'
 import { useUserCenter } from './useUserCenter'
 
+// 模块功能：提交白名单新增/删除请求，并展示当前白名单列表。
 function UserWhitelistPage() {
   const { account, isSubmitting, requireCredentials, runAction, setStatus, updateForm } = useUserCenter()
   const [whitelistForm, setWhitelistForm] = useState(initialWhitelistForm)

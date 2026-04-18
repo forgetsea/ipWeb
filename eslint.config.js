@@ -1,9 +1,11 @@
+// 文件用途：ESLint 配置，统一项目 JavaScript 和 React 代码检查规则。
 import js from '@eslint/js'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
+// 模块功能：组合 JS 推荐规则、React Hooks 规则和 Vite 刷新规则。
 export default defineConfig([
   globalIgnores(['dist']),
   {

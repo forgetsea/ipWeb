@@ -1,7 +1,12 @@
+// 文件用途：全站底部信息区，集中展示合作入口、友情链接和公司信息。
+
+// 模块功能：底部友情链接列表。
 const partnerLinks = ['代理导航', '跨境工具', '数据平台', '浏览器环境', '开发文档', '营销社区']
 
+// 模块功能：底部商务合作入口列表。
 const businessItems = ['商务合作', '渠道代理', '企业采购', '媒体联络']
 
+// 模块功能：底部公司联系信息。
 const companyInfo = [
   '公司名称：奇迹网络科技有限公司',
   '办公地址：上海市浦东新区示例商务园 A 栋 8 层',
@@ -9,6 +14,7 @@ const companyInfo = [
   '企业邮箱：business@example.com',
 ]
 
+// 模块功能：渲染全站统一页脚和备案信息。
 function SiteFooter() {
   return (
     <footer className="site-footer section-container">

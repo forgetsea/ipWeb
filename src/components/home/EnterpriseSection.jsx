@@ -1,3 +1,6 @@
+// 文件用途：首页企业定制区，展示企业方案说明和核心指标。
+
+// 模块功能：企业指标卡片使用的线性图标。
 const metricIcons = [
   <svg key="database" viewBox="0 0 24 24" aria-hidden="true">
     <ellipse cx="12" cy="5" rx="7" ry="3" />
@@ -17,6 +20,7 @@ const metricIcons = [
   </svg>,
 ]
 
+// 模块功能：渲染企业服务介绍、商务入口和能力指标。
 function EnterpriseSection({ metrics }) {
   return (
     <section className="enterprise-band" id="contact">

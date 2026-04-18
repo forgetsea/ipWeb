@@ -1,7 +1,9 @@
+// 文件用途：全站顶部导航栏，包含品牌、主导航和登录注册入口。
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { appRoutes } from '../../router'
 
+// 模块功能：在桌面端展示横向导航，在移动端管理折叠菜单开关。
 function SiteHeader({ navItems }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
