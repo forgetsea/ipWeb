@@ -1,49 +1,46 @@
-// 文件用途：登录和注册共用页面，按 mode 切换字段、文案和提交接口。
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import AuthForm from '../../components/auth/AuthForm'
 import SiteFooter from '../../components/layout/SiteFooter'
 import SiteHeader from '../../components/layout/SiteHeader'
 import { authApi } from '../../config/authApi'
 import { navItems } from '../../data/homeData'
 import { appRoutes } from '../../router'
-import { loginUser, registerUser } from '../../services/authService'
+import { loginUser, registerUser, sendEmailCode } from '../../services/authService'
 import '../../pages/HomePage.css'
 import '../AuthPage.css'
 
-// 登录和注册共用同一个页面骨架，只用配置区分字段、接口和文案。
 const pageContent = {
   login: {
     eyebrow: 'User Access',
-    title: '登录你的用户中心',
-    description:
-      '继续管理代理资源、查看套餐状态并衔接后续的业务接口。页面已经预留登录 API，后端就绪后可直接联调。',
+    title: '登录用户中心',
+    description: '使用平台账号登录后，用户中心请求会自动携带 Bearer token。',
     submitLabel: '立即登录',
     switchLabel: '还没有账号？',
     switchHref: appRoutes.register,
     switchText: '去注册',
     endpoint: authApi.login,
     fields: [
-      { name: 'username', label: '用户名', type: 'text', placeholder: '请输入用户名' },
-      { name: 'password', label: '密码', type: 'password', placeholder: '请输入密码' },
+      { name: 'account', label: '登录账号', type: 'text', placeholder: '当前使用邮箱登录' },
+      { name: 'password', label: '密码', type: 'password', placeholder: '请输入平台登录密码' },
     ],
     submitAction: loginUser,
-    successMessage: '登录请求已发送，后端接口联通后会在这里返回你的账户状态。',
+    successMessage: '登录成功。',
   },
   register: {
     eyebrow: 'Create Account',
-    title: '创建新的用户账号',
-    description:
-      '填写基础信息后即可提交到后端创建接口。当前注册页已经预留到 `URL/api/create_user`，后续只需要对接真实返回结构。',
+    title: '创建平台账号',
+    description: '先发送邮箱验证码，再使用邮箱、验证码和密码完成注册。',
     submitLabel: '创建账号',
     switchLabel: '已经有账号？',
     switchHref: appRoutes.login,
     switchText: '去登录',
     endpoint: authApi.register,
     fields: [
-      { name: 'username', label: '用户名', type: 'text', placeholder: '请输入用户名' },
-      { name: 'email', label: '邮箱', type: 'email', placeholder: '请输入常用邮箱' },
-      { name: 'password', label: '密码', type: 'password', placeholder: '请输入密码' },
+      { name: 'email', label: '邮箱', type: 'email', placeholder: '请输入常用邮箱', actionLabel: '发送验证码' },
+      { name: 'verifyCode', label: '验证码', type: 'text', placeholder: '请输入邮箱验证码' },
+      { name: 'nickname', label: '昵称', type: 'text', placeholder: '选填' },
+      { name: 'password', label: '密码', type: 'password', placeholder: '请输入平台登录密码' },
       {
         name: 'confirmPassword',
         label: '确认密码',
@@ -52,23 +49,26 @@ const pageContent = {
       },
     ],
     submitAction: registerUser,
-    successMessage: '注册请求已发送，等后端接口接通后，这里会展示创建结果。',
+    successMessage: '注册成功。',
   },
 }
 
 const initialValues = {
-  username: '',
+  account: '',
   email: '',
+  verifyCode: '',
+  nickname: '',
   password: '',
   confirmPassword: '',
 }
 
-// 模块功能：处理认证表单状态、基础校验、提交请求和结果提示。
 function AuthPage({ mode }) {
   const content = pageContent[mode] ?? pageContent.login
+  const navigate = useNavigate()
   const [formValues, setFormValues] = useState(initialValues)
   const [status, setStatus] = useState({ type: 'idle', message: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isFieldActionBusy, setIsFieldActionBusy] = useState('')
 
   const handleChange = (event) => {
     const { name, value } = event.target
@@ -79,16 +79,46 @@ function AuthPage({ mode }) {
     }))
   }
 
-  const handleSubmit = async (event) => {
-    event.preventDefault()
+  const handleFieldAction = async (fieldName) => {
+    if (fieldName !== 'email') return
 
-    if (!formValues.username.trim() || !formValues.password.trim()) {
-      setStatus({ type: 'error', message: '请输入用户名和密码。' })
+    if (!formValues.email.trim()) {
+      setStatus({ type: 'error', message: '请先输入邮箱。' })
       return
     }
 
-    if (mode === 'register' && formValues.password !== formValues.confirmPassword) {
-      setStatus({ type: 'error', message: '两次输入的密码不一致，请重新确认。' })
+    setIsFieldActionBusy(fieldName)
+    setStatus({ type: 'idle', message: '' })
+
+    try {
+      const result = await sendEmailCode({
+        email: formValues.email.trim(),
+        scene: 'register',
+      })
+
+      setStatus({ type: 'success', message: result?.message || '验证码已发送。' })
+    } catch (error) {
+      setStatus({ type: 'error', message: error instanceof Error ? error.message : '验证码发送失败。' })
+    } finally {
+      setIsFieldActionBusy('')
+    }
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+
+    if (mode === 'register') {
+      if (!formValues.email.trim() || !formValues.verifyCode.trim() || !formValues.password.trim()) {
+        setStatus({ type: 'error', message: '请输入邮箱、验证码和密码。' })
+        return
+      }
+
+      if (formValues.password !== formValues.confirmPassword) {
+        setStatus({ type: 'error', message: '两次输入的密码不一致，请重新确认。' })
+        return
+      }
+    } else if (!formValues.account.trim() || !formValues.password.trim()) {
+      setStatus({ type: 'error', message: '请输入登录账号和密码。' })
       return
     }
 
@@ -98,12 +128,14 @@ function AuthPage({ mode }) {
     const payload =
       mode === 'register'
         ? {
-            username: formValues.username.trim(),
             email: formValues.email.trim(),
             password: formValues.password,
+            confirmPassword: formValues.confirmPassword,
+            verifyCode: formValues.verifyCode.trim(),
+            nickname: formValues.nickname.trim(),
           }
         : {
-            username: formValues.username.trim(),
+            account: formValues.account.trim(),
             password: formValues.password,
           }
 
@@ -115,18 +147,11 @@ function AuthPage({ mode }) {
         message: result?.message || content.successMessage,
       })
 
-      if (mode === 'register') {
-        setFormValues(initialValues)
-      }
+      navigate(appRoutes.userCenter, { replace: true })
     } catch (error) {
-      const fallbackMessage =
-        mode === 'register'
-          ? '注册接口暂未联通，请确认后端是否已开放 URL/api/create_user。'
-          : '登录接口暂未联通，请在后端提供登录地址后更新接口配置。'
-
       setStatus({
         type: 'error',
-        message: error instanceof Error ? error.message : fallbackMessage,
+        message: error instanceof Error ? error.message : '接口暂未联通，请稍后再试。',
       })
     } finally {
       setIsSubmitting(false)
@@ -146,16 +171,16 @@ function AuthPage({ mode }) {
 
             <div className="auth-highlights" aria-hidden="true">
               <div>
-                <strong>接口预留</strong>
+                <strong>接口</strong>
                 <span>{content.endpoint}</span>
               </div>
               <div>
-                <strong>字段结构</strong>
-                <span>{mode === 'register' ? 'username / email / password' : 'username / password'}</span>
+                <strong>字段</strong>
+                <span>{mode === 'register' ? 'email / verifyCode / password' : 'account / password'}</span>
               </div>
               <div>
-                <strong>页面状态</strong>
-                <span>已支持提交、错误提示和成功反馈</span>
+                <strong>认证</strong>
+                <span>成功后保存 token，后续请求自动携带 Authorization</span>
               </div>
             </div>
           </div>
@@ -163,8 +188,10 @@ function AuthPage({ mode }) {
           <div className="auth-panel auth-form-card">
             <AuthForm
               fields={content.fields}
+              isFieldActionBusy={isFieldActionBusy}
               isSubmitting={isSubmitting}
               onChange={handleChange}
+              onFieldAction={handleFieldAction}
               onSubmit={handleSubmit}
               status={status}
               submitLabel={content.submitLabel}
@@ -172,8 +199,7 @@ function AuthPage({ mode }) {
             />
 
             <p className="auth-switch">
-              {content.switchLabel}{' '}
-              <Link to={content.switchHref}>{content.switchText}</Link>
+              {content.switchLabel} <Link to={content.switchHref}>{content.switchText}</Link>
             </p>
           </div>
         </section>

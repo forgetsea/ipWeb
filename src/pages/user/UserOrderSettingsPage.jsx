@@ -1,26 +1,34 @@
-// 文件用途：用户中心订单设置页，配置订单返回字段、格式和每日上限。
-import { useState } from 'react'
-import { updateDailyLimit, updateOrderSettings } from '../../services/userCenterService'
-import { initialLimitForm, initialSettingsForm, ipTypeOptions, visibilityFields } from './userCenterData'
+import { useEffect, useState } from 'react'
+import { updateOrderLimit, updateOrderSettings } from '../../services/userCenterService'
+import { initialSettingsForm, ipTypeOptions, visibilityFields } from './userCenterData'
 import { useUserCenter } from './useUserCenter'
 
-// 模块功能：提交供应商订单字段设置和每日提取限制。
 function UserOrderSettingsPage() {
-  const { account, isSubmitting, requireCredentials, runAction, updateForm } = useUserCenter()
+  const { account, isSubmitting, requireOrderNo, runAction, setStatus, updateForm } = useUserCenter()
   const [settingsForm, setSettingsForm] = useState(initialSettingsForm)
-  const [limitForm, setLimitForm] = useState(initialLimitForm)
+  const [limitForm, setLimitForm] = useState({ dayfetchlimit: '0' })
+
+  useEffect(() => {
+    setSettingsForm({
+      ...initialSettingsForm,
+      ...Object.fromEntries(Object.entries(account.settings || {}).map(([key, value]) => [key, String(value)])),
+    })
+    setLimitForm({
+      dayfetchlimit: String(account.dayfetchlimit ?? account.settings?.dayfetchlimit ?? 0),
+    })
+  }, [account])
 
   const handleSettingsSubmit = (event) => {
     event.preventDefault()
 
-    const credentials = requireCredentials()
+    const order = requireOrderNo()
 
-    if (!credentials) return
+    if (!order) return
 
     runAction({
       key: 'settings',
-      action: () => updateOrderSettings({ ...credentials, ...settingsForm }),
-      successMessage: '订单设置已提交。',
+      action: () => updateOrderSettings({ ...order, ...settingsForm }),
+      successMessage: '订单设置已保存。',
       updateAccount: true,
     })
   }
@@ -28,14 +36,21 @@ function UserOrderSettingsPage() {
   const handleLimitSubmit = (event) => {
     event.preventDefault()
 
-    const credentials = requireCredentials()
+    const order = requireOrderNo()
 
-    if (!credentials) return
+    if (!order) return
+
+    const nextLimit = Number(limitForm.dayfetchlimit)
+
+    if (!Number.isFinite(nextLimit) || nextLimit < 0) {
+      setStatus({ type: 'error', message: '次数上限必须是大于等于 0 的数字。' })
+      return
+    }
 
     runAction({
       key: 'limit',
-      action: () => updateDailyLimit({ ...credentials, ...limitForm }),
-      successMessage: '每日次数上限已提交。',
+      action: () => updateOrderLimit({ ...order, dayfetchlimit: nextLimit }),
+      successMessage: '次数上限已更新。',
       updateAccount: true,
     })
   }
@@ -45,9 +60,20 @@ function UserOrderSettingsPage() {
       <div className="user-section-title">
         <div>
           <p>Order</p>
-          <h2>创建订单账户</h2>
+          <h2>订单设置</h2>
         </div>
-        <span>当前上限：{account.dayfetchlimit}</span>
+        <span>设置接口只修改显示项、去重、返回格式和 session。次数上限需通过单独接口维护。</span>
+      </div>
+
+      <div className="user-key-value-grid">
+        <div>
+          <span>订单类型</span>
+          <strong>{Number(account.userType) === 0 ? '包时型 / 每日上限' : '次数型 / 总次数'}</strong>
+        </div>
+        <div>
+          <span>当前上限文案</span>
+          <strong>{account.displayLimitLabel || '次数上限'}</strong>
+        </div>
       </div>
 
       <form className="user-form" onSubmit={handleSettingsSubmit}>
@@ -75,12 +101,11 @@ function UserOrderSettingsPage() {
             </select>
           </label>
           <label className="user-field">
-            <span>会话时长</span>
+            <span>Session 时间</span>
             <input
               name="sessTime"
               type="number"
               min="1"
-              max="5"
               value={settingsForm.sessTime}
               onChange={updateForm(setSettingsForm)}
             />
@@ -93,17 +118,17 @@ function UserOrderSettingsPage() {
 
       <form className="user-inline-form" onSubmit={handleLimitSubmit}>
         <label className="user-field">
-          <span>每日次数上限</span>
+          <span>{account.displayLimitLabel || '次数上限'}</span>
           <input
             name="dayfetchlimit"
             type="number"
-            min="1"
+            min="0"
             value={limitForm.dayfetchlimit}
             onChange={updateForm(setLimitForm)}
           />
         </label>
-        <button type="submit" className="ghost-button">
-          {isSubmitting === 'limit' ? '提交中...' : '更新上限'}
+        <button type="submit" className="primary-button user-form-submit">
+          {isSubmitting === 'limit' ? '提交中...' : '保存次数上限'}
         </button>
       </form>
     </section>

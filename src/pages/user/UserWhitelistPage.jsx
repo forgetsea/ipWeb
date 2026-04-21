@@ -1,36 +1,48 @@
-// 文件用途：用户中心白名单页，管理允许访问接口的 IP 地址。
 import { useState } from 'react'
-import { updateWhitelist } from '../../services/userCenterService'
-import { initialWhitelistForm } from './userCenterData'
+import { addWhitelist, deleteWhitelist, fetchWhitelist } from '../../services/userCenterService'
+import { initialWhitelistForm, parseIps } from './userCenterData'
 import { useUserCenter } from './useUserCenter'
 
-// 模块功能：提交白名单新增/删除请求，并展示当前白名单列表。
 function UserWhitelistPage() {
-  const { account, isSubmitting, requireCredentials, runAction, setStatus, updateForm } = useUserCenter()
+  const { account, isSubmitting, requireOrderNo, runAction, setStatus, updateForm } = useUserCenter()
   const [whitelistForm, setWhitelistForm] = useState(initialWhitelistForm)
 
-  const handleWhitelistSubmit = (op) => (event) => {
+  const refreshWhitelist = () => {
+    const order = requireOrderNo()
+
+    if (!order) return
+
+    runAction({
+      key: 'whitelist-refresh',
+      action: () => fetchWhitelist(order),
+      successMessage: '白名单已刷新。',
+      updateAccount: true,
+    })
+  }
+
+  const handleWhitelistSubmit = (actionType) => (event) => {
     event.preventDefault()
 
-    const credentials = requireCredentials()
+    const order = requireOrderNo()
 
-    if (!credentials) return
+    if (!order) return
 
-    if (!whitelistForm.ipAddress.trim()) {
+    const ips = parseIps(whitelistForm.ipsText)
+
+    if (!ips.length) {
       setStatus({ type: 'error', message: '请输入要操作的白名单 IP。' })
       return
     }
 
     runAction({
-      key: `whitelist-${op}`,
-      action: () =>
-        updateWhitelist({
-          ...credentials,
-          op,
-          ip_address: whitelistForm.ipAddress.trim(),
-        }),
-      successMessage: op === 'add' ? '白名单添加请求已提交。' : '白名单删除请求已提交。',
-      updateAccount: true,
+      key: `whitelist-${actionType}`,
+      action: () => (actionType === 'add' ? addWhitelist({ ...order, ips }) : deleteWhitelist({ ...order, ips })),
+      successMessage: actionType === 'add' ? '白名单添加请求已提交。' : '白名单删除请求已提交。',
+      updateAccount: false,
+      afterSuccess: () => {
+        setWhitelistForm(initialWhitelistForm)
+        refreshWhitelist()
+      },
     })
   }
 
@@ -42,33 +54,38 @@ function UserWhitelistPage() {
             <p>Whitelist</p>
             <h2>IP 白名单</h2>
           </div>
+          <button type="button" className="ghost-button" onClick={refreshWhitelist}>
+            {isSubmitting === 'whitelist-refresh' ? '刷新中...' : '刷新'}
+          </button>
         </div>
 
         <form className="user-form" onSubmit={handleWhitelistSubmit('add')}>
           <label className="user-field">
             <span>IP 地址</span>
-            <input
-              name="ipAddress"
-              value={whitelistForm.ipAddress}
+            <textarea
+              name="ipsText"
+              value={whitelistForm.ipsText}
               onChange={updateForm(setWhitelistForm)}
-              placeholder="例如 123.123.123.123"
+              placeholder="可输入多个 IP，用换行、空格、逗号或分号分隔"
             />
           </label>
           <div className="user-action-row">
             <button type="submit" className="primary-button">
-              {isSubmitting === 'whitelist-add' ? '添加中...' : '添加'}
+              {isSubmitting === 'whitelist-add' ? '添加中...' : '批量添加'}
             </button>
-            <button type="button" className="ghost-button" onClick={handleWhitelistSubmit('del')}>
-              {isSubmitting === 'whitelist-del' ? '删除中...' : '删除'}
+            <button type="button" className="ghost-button" onClick={handleWhitelistSubmit('delete')}>
+              {isSubmitting === 'whitelist-delete' ? '删除中...' : '批量删除'}
             </button>
           </div>
         </form>
       </div>
 
       <div className="whitelist-list">
-        {account.whitelist.map((ip) => (
-          <span key={ip}>{ip}</span>
-        ))}
+        {account.whitelist.length ? (
+          account.whitelist.map((ip) => <span key={ip}>{ip}</span>)
+        ) : (
+          <p className="user-note">当前订单还没有白名单记录。</p>
+        )}
       </div>
     </section>
   )

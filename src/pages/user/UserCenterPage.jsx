@@ -1,27 +1,41 @@
-// 文件用途：用户中心父页面，维护共享账户状态并承载子路由。
 import { Outlet } from 'react-router-dom'
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import SiteFooter from '../../components/layout/SiteFooter'
 import SiteHeader from '../../components/layout/SiteHeader'
 import { navItems } from '../../data/homeData'
-import { fetchAccountInfo, fetchUsage } from '../../services/userCenterService'
+import { fetchOrderApiInfo, fetchOrderDetail, fetchOrders, fetchUsage } from '../../services/userCenterService'
 import {
   getMessage,
   initialCredentialForm,
   normalizeAccountData,
+  normalizeOrderList,
+  orderStatusLabels,
+  packageTypeLabels,
   sampleAccount,
+  userTypeLabels,
 } from './userCenterData'
 import '../HomePage.css'
 import './UserCenterPage.css'
 
-// 模块功能：管理用户中心的凭据、账户、提交状态，并通过 Outlet context 下发。
+function mergeOrderWorkspace(detailResult, apiResult) {
+  return {
+    ...detailResult,
+    data: {
+      ...(detailResult?.data || {}),
+      ...(apiResult?.data || {}),
+      settings: apiResult?.data?.settings || detailResult?.data?.settings,
+      whitelist: apiResult?.data?.whitelist || detailResult?.data?.whitelist,
+    },
+  }
+}
+
 function UserCenterPage() {
   const [credentialForm, setCredentialForm] = useState(initialCredentialForm)
   const [account, setAccount] = useState(sampleAccount)
+  const [orders, setOrders] = useState([])
   const [status, setStatus] = useState({ type: 'idle', message: '' })
   const [isSubmitting, setIsSubmitting] = useState('')
 
-  // 子页面表单很多，抽出通用 change handler，保持字段名和 state key 一致即可复用。
   const updateForm = (setter) => (event) => {
     const { name, value } = event.target
 
@@ -31,21 +45,18 @@ function UserCenterPage() {
     }))
   }
 
-  // 用户中心的接口大多依赖供应商账号和调用密码，提交前统一校验。
-  const requireCredentials = () => {
-    if (!credentialForm.username.trim() || !credentialForm.password.trim()) {
-      setStatus({ type: 'error', message: '请先填写 API 账户和调用密码。' })
+  const requireOrderNo = useCallback(() => {
+    if (!credentialForm.orderNo.trim()) {
+      setStatus({ type: 'error', message: '请先填写或选择订单号。' })
       return null
     }
 
     return {
-      username: credentialForm.username.trim(),
-      password: credentialForm.password,
+      orderNo: credentialForm.orderNo.trim(),
     }
-  }
+  }, [credentialForm.orderNo])
 
-  // 集中处理按钮 loading、成功/失败提示和账户数据回写，避免每个子页面重复 try/catch。
-  const runAction = async ({ key, action, successMessage, updateAccount = false }) => {
+  const runAction = useCallback(async ({ key, action, successMessage, updateAccount = false, afterSuccess }) => {
     setIsSubmitting(key)
     setStatus({ type: 'idle', message: '' })
 
@@ -56,58 +67,158 @@ function UserCenterPage() {
         setAccount((current) => normalizeAccountData(result, current))
       }
 
+      if (afterSuccess) {
+        afterSuccess(result)
+      }
+
       setStatus({ type: 'success', message: getMessage(result, successMessage) })
+      return result
     } catch (error) {
       setStatus({
         type: 'error',
-        message:
-          error instanceof Error
-            ? error.message
-            : '接口暂未联通，后端代理接好后这里会返回真实结果。',
+        message: error instanceof Error ? error.message : '接口暂未联通，请稍后再试。',
       })
+      return null
     } finally {
       setIsSubmitting('')
     }
-  }
+  }, [])
+
+  const selectOrder = useCallback(
+    (orderNo) => {
+      setCredentialForm({ orderNo })
+      const selectedOrder = orders.find((item) => item.orderNo === orderNo)
+
+      if (selectedOrder) {
+        setAccount((previous) => normalizeAccountData({ data: selectedOrder }, previous))
+      }
+    },
+    [orders],
+  )
+
+  const refreshOrders = useCallback(
+    async ({ silent = false } = {}) => {
+      setIsSubmitting('orders-load')
+      if (!silent) {
+        setStatus({ type: 'idle', message: '' })
+      }
+
+      try {
+        const result = await fetchOrders({ page: 1, pageSize: 20 })
+        const nextOrders = normalizeOrderList(result)
+        setOrders(nextOrders)
+
+        const currentOrderNo = credentialForm.orderNo.trim()
+        const nextOrderNo =
+          nextOrders.find((item) => item.orderNo === currentOrderNo)?.orderNo || nextOrders[0]?.orderNo || currentOrderNo
+
+        if (nextOrderNo) {
+          setCredentialForm({ orderNo: nextOrderNo })
+          setAccount((current) => {
+            const selectedOrder = nextOrders.find((item) => item.orderNo === nextOrderNo)
+            return selectedOrder ? normalizeAccountData({ data: selectedOrder }, current) : current
+          })
+        }
+
+        if (!silent) {
+          setStatus({ type: 'success', message: getMessage(result, '订单列表已刷新。') })
+        }
+
+        return { result, nextOrderNo }
+      } catch (error) {
+        setStatus({
+          type: 'error',
+          message: error instanceof Error ? error.message : '订单列表加载失败，请稍后再试。',
+        })
+        return { result: null, nextOrderNo: '' }
+      } finally {
+        setIsSubmitting('')
+      }
+    },
+    [credentialForm.orderNo],
+  )
+
+  const loadOrderWorkspace = useCallback(
+    async (orderNo, key = 'refresh', successMessage = '订单信息已刷新。') =>
+      runAction({
+        key,
+        action: async () => {
+          const [detailResult, apiResult] = await Promise.all([fetchOrderDetail(orderNo), fetchOrderApiInfo(orderNo)])
+          return mergeOrderWorkspace(detailResult, apiResult)
+        },
+        successMessage,
+        updateAccount: true,
+        afterSuccess: (result) => {
+          const normalized = normalizeAccountData(result, sampleAccount)
+          setOrders((current) => {
+            const next = [...current]
+            const index = next.findIndex((item) => item.orderNo === normalized.orderNo)
+
+            if (index >= 0) {
+              next[index] = { ...next[index], ...normalized }
+              return next
+            }
+
+            return [normalized, ...next]
+          })
+        },
+      }),
+    [runAction],
+  )
+
+  useEffect(() => {
+    let mounted = true
+
+    async function bootstrap() {
+      const { nextOrderNo } = await refreshOrders({ silent: true })
+
+      if (mounted && nextOrderNo) {
+        await loadOrderWorkspace(nextOrderNo, 'bootstrap', '订单信息已同步。')
+      }
+    }
+
+    bootstrap()
+
+    return () => {
+      mounted = false
+    }
+  }, [loadOrderWorkspace, refreshOrders])
 
   const handleRefresh = () => {
-    const credentials = requireCredentials()
+    const order = requireOrderNo()
 
-    if (!credentials) return
+    if (!order) return
 
-    runAction({
-      key: 'refresh',
-      action: () => fetchAccountInfo(credentials),
-      successMessage: '账户信息已刷新。',
-      updateAccount: true,
-    })
+    loadOrderWorkspace(order.orderNo)
   }
 
   const handleUsage = () => {
-    const credentials = requireCredentials()
+    const order = requireOrderNo()
 
-    if (!credentials) return
+    if (!order) return
 
     runAction({
       key: 'usage',
-      action: () => fetchUsage(credentials),
-      successMessage: '提取余量已刷新。',
+      action: () => fetchUsage(order),
+      successMessage: '额度信息已刷新。',
       updateAccount: true,
     })
   }
 
-  const accountStatusText = account.isLocked === '0' ? '正常' : '已关闭'
-  const accountTypeText = account.usertype === '0' ? '包月包天' : '次数用户'
+  const accountStatusText = Number(account.isLocked) === 0 ? '正常' : '已关闭'
+  const accountTypeText = packageTypeLabels[account.packageType] || userTypeLabels[account.userType] || '订单套餐'
 
-  // 通过 react-router 的 Outlet context 向所有用户中心子路由共享状态和动作。
   const outletContext = {
     account,
     credentialForm,
     handleRefresh,
     handleUsage,
     isSubmitting,
-    requireCredentials,
+    orders,
+    refreshOrders,
+    requireOrderNo,
     runAction,
+    selectOrder,
     setAccount,
     setCredentialForm,
     setStatus,
@@ -123,26 +234,26 @@ function UserCenterPage() {
         <section className="user-center-hero section-container">
           <div>
             <span className="eyebrow">User Center</span>
-            <h1>管理你的代理账户</h1>
-            <p>按功能进入不同页面，维护资料、安全、订单返回字段、白名单和 IP 提取。</p>
+            <h1>管理你的订单 API</h1>
+            <p>根据最新订单文档查看订单详情、额度、次数上限、API 开关、返回字段和白名单。</p>
           </div>
 
           <div className="user-center-summary" aria-label="账户摘要">
             <div>
-              <span>账户状态</span>
+              <span>订单状态</span>
+              <strong>{orderStatusLabels[account.orderStatus] || account.orderStatus || '-'}</strong>
+            </div>
+            <div>
+              <span>API 开关</span>
               <strong>{accountStatusText}</strong>
             </div>
             <div>
-              <span>账户类型</span>
+              <span>套餐类型</span>
               <strong>{accountTypeText}</strong>
             </div>
             <div>
-              <span>剩余次数</span>
-              <strong>{account.leftNum}</strong>
-            </div>
-            <div>
-              <span>总次数</span>
-              <strong>{account.allNum}</strong>
+              <span>{account.displayLimitLabel || '次数上限'}</span>
+              <strong>{account.dayfetchlimit ?? '-'}</strong>
             </div>
           </div>
         </section>

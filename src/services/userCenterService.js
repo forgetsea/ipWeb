@@ -1,48 +1,90 @@
-// 文件用途：用户中心各功能页的业务请求服务。
 import { userCenterApi } from '../config/userCenterApi'
-import { postJson } from './request'
+import { deleteJson, getJson, postJson, putJson } from './request'
 
-// 模块功能：更新用户基础资料。
+export function fetchDashboard() {
+  return getJson(userCenterApi.dashboard)
+}
+
+export function fetchProfile() {
+  return getJson(userCenterApi.profile)
+}
+
 export function updateProfile(payload) {
-  return postJson(userCenterApi.profile, payload)
+  return putJson(userCenterApi.profile, payload)
 }
 
-// 模块功能：查询供应商账户信息。
-export function fetchAccountInfo(payload) {
-  return postJson(userCenterApi.accountInfo, payload)
-}
-
-// 模块功能：修改供应商账户调用密码。
 export function updatePassword(payload) {
-  return postJson(userCenterApi.updatePassword, payload)
+  return putJson(userCenterApi.password, payload)
 }
 
-// 模块功能：开启或关闭供应商账户。
-export function updateAccountStatus(payload) {
-  return postJson(userCenterApi.updateAccountStatus, payload)
+export function fetchOrders(params = {}) {
+  const searchParams = new URLSearchParams()
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== '') {
+      searchParams.set(key, value)
+    }
+  })
+
+  const query = searchParams.toString()
+  return getJson(query ? `${userCenterApi.orders}?${query}` : userCenterApi.orders)
 }
 
-// 模块功能：保存订单返回字段和提取格式设置。
-export function updateOrderSettings(payload) {
-  return postJson(userCenterApi.updateOrderSettings, payload)
+export function fetchOrderDetail(orderNo) {
+  return getJson(userCenterApi.orderDetail(orderNo))
 }
 
-// 模块功能：更新每日提取次数上限。
-export function updateDailyLimit(payload) {
-  return postJson(userCenterApi.updateDailyLimit, payload)
+export function fetchOrderStatus(orderNo) {
+  return getJson(userCenterApi.orderStatus(orderNo))
 }
 
-// 模块功能：添加或删除 IP 白名单。
-export function updateWhitelist(payload) {
-  return postJson(userCenterApi.whitelist, payload)
+export function fetchOrderApiInfo(orderNo) {
+  return getJson(userCenterApi.orderApi(orderNo))
 }
 
-// 模块功能：查询账户剩余提取次数。
-export function fetchUsage(payload) {
-  return postJson(userCenterApi.usage, payload)
+export function syncOrderApiInfo(orderNo) {
+  return postJson(userCenterApi.orderApiSync(orderNo), {})
 }
 
-// 模块功能：提交 IP 提取测试请求。
-export function extractIp(payload) {
-  return postJson(userCenterApi.extractIp, payload)
+export function updateAccountStatus({ orderNo, isLocked }) {
+  return putJson(userCenterApi.orderApiStatus(orderNo), { isLocked: Number(isLocked) })
+}
+
+export function updateOrderSettings({ orderNo, ...settings }) {
+  const allowedFields = ['outip', 'lsp', 'prov', 'city', 'endtime', 'ifs', 'iptype', 'sessTime']
+  const numericSettings = Object.fromEntries(
+    Object.entries(settings)
+      .filter(([key]) => allowedFields.includes(key))
+      .map(([key, value]) => [key, Number(value)]),
+  )
+
+  return putJson(userCenterApi.orderApiSettings(orderNo), numericSettings)
+}
+
+export function updateOrderLimit({ orderNo, dayfetchlimit }) {
+  return putJson(userCenterApi.orderApiLimit(orderNo), { dayfetchlimit: Number(dayfetchlimit) })
+}
+
+export function fetchUsage({ orderNo }) {
+  return getJson(userCenterApi.orderApiQuota(orderNo))
+}
+
+export function fetchWhitelist({ orderNo }) {
+  return getJson(userCenterApi.whitelist(orderNo))
+}
+
+export function addWhitelist({ orderNo, ips }) {
+  return postJson(userCenterApi.whitelist(orderNo), { ips })
+}
+
+export function deleteWhitelist({ orderNo, ips }) {
+  return deleteJson(userCenterApi.whitelist(orderNo), { ips })
+}
+
+export function fetchApiSummary() {
+  return getJson(userCenterApi.apiSummary)
+}
+
+export function fetchCodeDemos() {
+  return getJson(userCenterApi.codeDemos)
 }

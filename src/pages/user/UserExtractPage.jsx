@@ -1,31 +1,20 @@
-// 文件用途：用户中心 IP 提取测试页，按数量和地区编码提交提取请求。
-import { useState } from 'react'
-import { extractIp } from '../../services/userCenterService'
-import { initialExtractForm } from './userCenterData'
+import { fetchApiSummary, fetchCodeDemos } from '../../services/userCenterService'
 import { useUserCenter } from './useUserCenter'
 
-// 模块功能：把页面表单字段转换为供应商提取接口需要的参数。
 function UserExtractPage() {
-  const { isSubmitting, requireCredentials, runAction, updateForm } = useUserCenter()
-  const [extractForm, setExtractForm] = useState(initialExtractForm)
+  const { isSubmitting, runAction } = useUserCenter()
 
-  const handleExtractSubmit = (event) => {
-    event.preventDefault()
-
-    const credentials = requireCredentials()
-
-    if (!credentials) return
-
+  const handleFetchDocs = () => {
     runAction({
-      key: 'extract',
-      action: () =>
-        extractIp({
-          infoid: credentials.username,
-          pw: credentials.password,
-          p1: extractForm.count,
-          p2: extractForm.regionCode,
-        }),
-      successMessage: '提取请求已提交。',
+      key: 'docs',
+      action: async () => {
+        const [summary, demos] = await Promise.all([fetchApiSummary(), fetchCodeDemos()])
+        return {
+          message: summary?.data?.title || `已获取 ${demos?.data?.list?.length || 0} 个代码示例。`,
+          data: { summary: summary?.data, demos: demos?.data?.list || [] },
+        }
+      },
+      successMessage: 'API 文档摘要已刷新。',
     })
   }
 
@@ -33,37 +22,15 @@ function UserExtractPage() {
     <section className="user-panel">
       <div className="user-section-title">
         <div>
-          <p>Extract</p>
-          <h2>提取 IP 测试</h2>
+          <p>Docs</p>
+          <h2>API 文档 / 代码示例</h2>
         </div>
-        <span>单次 1 到 200 个</span>
+        <button type="button" className="ghost-button" onClick={handleFetchDocs}>
+          {isSubmitting === 'docs' ? '读取中...' : '读取文档摘要'}
+        </button>
       </div>
 
-      <form className="user-form-grid user-form" onSubmit={handleExtractSubmit}>
-        <label className="user-field">
-          <span>提取数量</span>
-          <input
-            name="count"
-            type="number"
-            min="1"
-            max="200"
-            value={extractForm.count}
-            onChange={updateForm(setExtractForm)}
-          />
-        </label>
-        <label className="user-field">
-          <span>地区编码</span>
-          <input
-            name="regionCode"
-            value={extractForm.regionCode}
-            onChange={updateForm(setExtractForm)}
-            placeholder="选填，例如 410100"
-          />
-        </label>
-        <button type="submit" className="primary-button user-form-submit">
-          {isSubmitting === 'extract' ? '提交中...' : '提取 IP'}
-        </button>
-      </form>
+      <p>最新文档未提供前端直接提取 IP 的业务接口。页面改为读取平台 API 文档摘要和代码示例，实际 IP 提取由订单 API 凭证在服务端维护。</p>
     </section>
   )
 }

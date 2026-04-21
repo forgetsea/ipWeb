@@ -1,10 +1,9 @@
-// 文件用途：登录注册通用表单组件，按字段配置渲染输入项和提交按钮。
-
-// 模块功能：接收外部状态和事件处理器，保持表单本身无业务判断。
 function AuthForm({
   fields,
+  isFieldActionBusy,
   isSubmitting,
   onChange,
+  onFieldAction,
   onSubmit,
   status,
   submitLabel,
@@ -15,13 +14,20 @@ function AuthForm({
       {fields.map((field) => (
         <label key={field.name} className="auth-field">
           <span>{field.label}</span>
-          <input
-            type={field.type}
-            name={field.name}
-            placeholder={field.placeholder}
-            value={values[field.name]}
-            onChange={onChange}
-          />
+          <div className={field.actionLabel ? 'auth-input-row' : undefined}>
+            <input
+              type={field.type}
+              name={field.name}
+              placeholder={field.placeholder}
+              value={values[field.name] || ''}
+              onChange={onChange}
+            />
+            {field.actionLabel ? (
+              <button type="button" className="ghost-button" onClick={() => onFieldAction(field.name)}>
+                {isFieldActionBusy === field.name ? '发送中...' : field.actionLabel}
+              </button>
+            ) : null}
+          </div>
         </label>
       ))}
 

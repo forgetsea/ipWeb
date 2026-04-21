@@ -1,21 +1,14 @@
-// 文件用途：用户中心安全设置页，处理密码修改和账户开关。
 import { useState } from 'react'
 import { updateAccountStatus, updatePassword } from '../../services/userCenterService'
 import { initialPasswordForm } from './userCenterData'
 import { useUserCenter } from './useUserCenter'
 
-// 模块功能：校验新密码、提交密码修改，并同步账户启停状态。
 function UserSecurityPage() {
-  const { account, setAccount, isSubmitting, requireCredentials, runAction, setStatus, updateForm } =
-    useUserCenter()
+  const { account, isSubmitting, requireOrderNo, runAction, setStatus, updateForm } = useUserCenter()
   const [passwordForm, setPasswordForm] = useState(initialPasswordForm)
 
   const handlePasswordSubmit = (event) => {
     event.preventDefault()
-
-    const credentials = requireCredentials()
-
-    if (!credentials) return
 
     if (passwordForm.newPassword.length < 6) {
       setStatus({ type: 'error', message: '新密码不能低于 6 位。' })
@@ -31,30 +24,27 @@ function UserSecurityPage() {
       key: 'password',
       action: () =>
         updatePassword({
-          ...credentials,
-          password: passwordForm.currentPassword || credentials.password,
-          new_password: passwordForm.newPassword,
+          oldPassword: passwordForm.oldPassword,
+          newPassword: passwordForm.newPassword,
+          confirmPassword: passwordForm.confirmPassword,
         }),
-      successMessage: '密码修改请求已提交。',
-      updateAccount: true,
+      successMessage: '登录密码已修改。',
     })
   }
 
   const handleStatusToggle = () => {
-    const credentials = requireCredentials()
+    const order = requireOrderNo()
 
-    if (!credentials) return
+    if (!order) return
 
-    const nextStatus = account.isLocked === '0' ? '1' : '0'
+    const nextStatus = Number(account.isLocked) === 0 ? 1 : 0
 
     runAction({
       key: 'status',
-      action: () => updateAccountStatus({ ...credentials, isLocked: nextStatus }),
-      successMessage: nextStatus === '0' ? '账户已开启。' : '账户已关闭。',
+      action: () => updateAccountStatus({ ...order, isLocked: nextStatus }),
+      successMessage: nextStatus === 0 ? '订单 API 已开启。' : '订单 API 已关闭。',
       updateAccount: true,
     })
-
-    setAccount((current) => ({ ...current, isLocked: nextStatus }))
   }
 
   return (
@@ -62,26 +52,25 @@ function UserSecurityPage() {
       <div className="user-section-title">
         <div>
           <p>Security</p>
-          <h2>密码与账户开关</h2>
+          <h2>安全设置</h2>
         </div>
         <button type="button" className="ghost-button" onClick={handleStatusToggle}>
-          {isSubmitting === 'status' ? '处理中...' : account.isLocked === '0' ? '关闭账户' : '开启账户'}
+          {isSubmitting === 'status' ? '处理中...' : Number(account.isLocked) === 0 ? '关闭订单 API' : '开启订单 API'}
         </button>
       </div>
 
       <form className="user-form user-form-grid" onSubmit={handlePasswordSubmit}>
         <label className="user-field">
-          <span>当前密码</span>
+          <span>原登录密码</span>
           <input
-            name="currentPassword"
+            name="oldPassword"
             type="password"
-            value={passwordForm.currentPassword}
+            value={passwordForm.oldPassword}
             onChange={updateForm(setPasswordForm)}
-            placeholder="默认使用上方调用密码"
           />
         </label>
         <label className="user-field">
-          <span>新密码</span>
+          <span>新登录密码</span>
           <input
             name="newPassword"
             type="password"
@@ -99,7 +88,7 @@ function UserSecurityPage() {
           />
         </label>
         <button type="submit" className="primary-button user-form-submit">
-          {isSubmitting === 'password' ? '提交中...' : '修改密码'}
+          {isSubmitting === 'password' ? '提交中...' : '修改登录密码'}
         </button>
       </form>
     </section>

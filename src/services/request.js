@@ -1,10 +1,9 @@
-// 文件用途：封装浏览器 fetch 请求，统一处理 JSON 提交和错误消息。
+const TOKEN_STORAGE_KEY = 'ipweb_auth_token'
+const USER_STORAGE_KEY = 'ipweb_auth_user'
 
-// 模块功能：把不同内容类型的响应整理为页面可直接消费的数据。
 async function parseResponse(response) {
   const contentType = response.headers.get('content-type') || ''
 
-  // 兼容后端联调早期的返回：优先读 JSON，纯文本错误也统一包装成 message。
   if (contentType.includes('application/json')) {
     return response.json()
   }
@@ -13,21 +12,75 @@ async function parseResponse(response) {
   return text ? { message: text } : null
 }
 
-export async function postJson(url, body) {
-  // 所有业务接口先走同一层 POST JSON，便于后续补 token、超时和全局错误处理。
+function getStoredToken() {
+  return window.localStorage.getItem(TOKEN_STORAGE_KEY)
+}
+
+function buildHeaders(hasBody) {
+  const token = getStoredToken()
+  const headers = {}
+
+  if (hasBody) {
+    headers['Content-Type'] = 'application/json'
+  }
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`
+  }
+
+  return headers
+}
+
+export function saveAuthSession(result) {
+  const token = result?.data?.token
+
+  if (token) {
+    window.localStorage.setItem(TOKEN_STORAGE_KEY, token)
+  }
+
+  if (result?.data?.user) {
+    window.localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(result.data.user))
+  }
+}
+
+export function clearAuthSession() {
+  window.localStorage.removeItem(TOKEN_STORAGE_KEY)
+  window.localStorage.removeItem(USER_STORAGE_KEY)
+}
+
+export async function requestJson(url, { method = 'GET', body } = {}) {
+  const hasBody = body !== undefined
   const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
+    method,
+    headers: buildHeaders(hasBody),
+    body: hasBody ? JSON.stringify(body) : undefined,
   })
 
   const data = await parseResponse(response)
 
-  if (!response.ok) {
+  if (!response.ok || (data?.code !== undefined && data.code !== 0)) {
+    if (data?.code === 40002) {
+      clearAuthSession()
+    }
+
     throw new Error(data?.message || '接口暂未返回成功结果，请稍后再试。')
   }
 
   return data
+}
+
+export function getJson(url) {
+  return requestJson(url)
+}
+
+export function postJson(url, body) {
+  return requestJson(url, { method: 'POST', body })
+}
+
+export function putJson(url, body) {
+  return requestJson(url, { method: 'PUT', body })
+}
+
+export function deleteJson(url, body) {
+  return requestJson(url, { method: 'DELETE', body })
 }

@@ -1,24 +1,26 @@
-// 文件用途：用户中心账户概览页，展示提取额度、会话和白名单摘要。
 import { fetchUsage } from '../../services/userCenterService'
-import { ipTypeOptions } from './userCenterData'
+import { ipTypeOptions, orderStatusLabels, packageTypeLabels, userTypeLabels } from './userCenterData'
 import { useUserCenter } from './useUserCenter'
 
-// 模块功能：读取共享账户状态，并支持手动刷新提取余量。
 function UserOverviewPage() {
-  const { account, isSubmitting, requireCredentials, runAction } = useUserCenter()
+  const { account, isSubmitting, requireOrderNo, runAction } = useUserCenter()
 
   const handleUsage = () => {
-    const credentials = requireCredentials()
+    const order = requireOrderNo()
 
-    if (!credentials) return
+    if (!order) return
 
     runAction({
       key: 'usage',
-      action: () => fetchUsage(credentials),
-      successMessage: '提取余量已刷新。',
+      action: () => fetchUsage(order),
+      successMessage: '额度信息已刷新。',
       updateAccount: true,
     })
   }
+
+  const settings = account.settings || {}
+  const packageTypeText = packageTypeLabels[account.packageType] || userTypeLabels[account.userType] || '-'
+  const ipTypeText = ipTypeOptions.find((option) => option.value === String(settings.iptype ?? account.iptype ?? '0'))?.label || 'JSON'
 
   return (
     <section className="user-panel">
@@ -28,26 +30,77 @@ function UserOverviewPage() {
           <h2>账户概览</h2>
         </div>
         <button type="button" className="ghost-button" onClick={handleUsage}>
-          {isSubmitting === 'usage' ? '查询中...' : '刷新余量'}
+          {isSubmitting === 'usage' ? '查询中...' : '刷新额度'}
         </button>
       </div>
 
       <div className="user-overview-grid">
         <div>
-          <span>每日上限</span>
-          <strong>{account.dayfetchlimit}</strong>
+          <span>订单号</span>
+          <strong>{account.orderNo || '-'}</strong>
         </div>
         <div>
-          <span>会话时长</span>
-          <strong>{account.sessTime}</strong>
+          <span>订单状态</span>
+          <strong>{orderStatusLabels[account.orderStatus] || account.orderStatus || '-'}</strong>
+        </div>
+        <div>
+          <span>套餐类型</span>
+          <strong>{packageTypeText}</strong>
+        </div>
+        <div>
+          <span>订单金额</span>
+          <strong>{account.amount ?? '-'}</strong>
+        </div>
+        <div>
+          <span>{account.displayLimitLabel || '次数上限'}</span>
+          <strong>{account.dayfetchlimit ?? '-'}</strong>
+        </div>
+        <div>
+          <span>剩余额度</span>
+          <strong>{account.leftNum ?? account.remainingQuota ?? '-'}</strong>
+        </div>
+        <div>
+          <span>总额度</span>
+          <strong>{account.allNum ?? account.totalQuota ?? '-'}</strong>
+        </div>
+        <div>
+          <span>已用额度</span>
+          <strong>{account.usedQuota ?? '-'}</strong>
+        </div>
+        <div>
+          <span>Session 时间</span>
+          <strong>{settings.sessTime ?? account.sessTime ?? '-'}</strong>
         </div>
         <div>
           <span>返回格式</span>
-          <strong>{ipTypeOptions.find((option) => option.value === account.iptype)?.label || 'JSON'}</strong>
+          <strong>{ipTypeText}</strong>
         </div>
         <div>
           <span>白名单数量</span>
           <strong>{account.whitelist.length}</strong>
+        </div>
+        <div>
+          <span>API 开关</span>
+          <strong>{Number(account.isLocked) === 0 ? '开启' : '关闭'}</strong>
+        </div>
+      </div>
+
+      <div className="user-key-value-grid">
+        <div>
+          <span>下单时间</span>
+          <strong>{account.createdAt || '-'}</strong>
+        </div>
+        <div>
+          <span>支付时间</span>
+          <strong>{account.paidAt || '-'}</strong>
+        </div>
+        <div>
+          <span>生效时间</span>
+          <strong>{account.activeAt || '-'}</strong>
+        </div>
+        <div>
+          <span>结束时间</span>
+          <strong>{account.expiredAt || '-'}</strong>
         </div>
       </div>
     </section>

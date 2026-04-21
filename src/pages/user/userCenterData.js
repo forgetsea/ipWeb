@@ -1,28 +1,20 @@
-// 文件用途：用户中心初始表单、示例账户、选项和数据适配工具。
 import { appRoutes } from '../../router'
 
-// 模块功能：API 凭据表单初始值。
 export const initialCredentialForm = {
-  username: '',
-  password: '',
+  orderNo: '',
 }
 
-// 模块功能：基础资料表单初始值。
 export const initialProfileForm = {
-  displayName: '天启用户',
-  company: '',
+  nickname: '',
   phone: '',
-  email: '',
 }
 
-// 模块功能：密码修改表单初始值。
 export const initialPasswordForm = {
-  currentPassword: '',
+  oldPassword: '',
   newPassword: '',
   confirmPassword: '',
 }
 
-// 模块功能：订单字段设置表单初始值。
 export const initialSettingsForm = {
   outip: '0',
   lsp: '0',
@@ -30,49 +22,74 @@ export const initialSettingsForm = {
   city: '0',
   endtime: '0',
   ifs: '0',
-  iptype: '0',
   sessTime: '1',
+  iptype: '0',
 }
 
-// 模块功能：每日提取上限表单初始值。
-export const initialLimitForm = {
-  dayfetchlimit: '10000',
-}
-
-// 模块功能：白名单表单初始值。
 export const initialWhitelistForm = {
-  ipAddress: '',
+  ipsText: '',
 }
 
-// 模块功能：IP 提取测试表单初始值。
 export const initialExtractForm = {
   count: '10',
   regionCode: '',
 }
 
-// 模块功能：后端未接通前用于页面展示的账户示例数据。
 export const sampleAccount = {
-  isLocked: '0',
-  usertype: '0',
-  dayfetchlimit: '10000',
-  sessTime: '1',
-  iptype: '0',
-  whitelist: ['123.123.123.1', '123.123.123.2'],
-  leftNum: 10000,
+  orderNo: 'P202604200001',
+  apiAccount: 'P202604200001',
+  packageName: '',
+  orderStatus: 'active',
+  payStatus: '',
+  isLocked: 0,
+  userType: 1,
+  packageType: 'balance',
+  amount: 0,
+  dayfetchlimit: 0,
+  displayLimitLabel: '总次数',
+  dailyLimit: null,
+  totalQuota: 10000,
+  remainingQuota: 8000,
+  usedQuota: 2000,
+  leftNum: 8000,
   allNum: 10000,
+  createdAt: '',
+  paidAt: '',
+  activeAt: '',
+  expiredAt: '',
+  settings: initialSettingsForm,
+  whitelist: ['123.123.123.1', '123.123.123.2'],
 }
 
-// 供应商订单设置使用 0/1 字符串开关，保持表单值和接口字段一致。
+export const orderStatusLabels = {
+  pending_payment: '待支付',
+  paid: '已支付',
+  provisioning: '开通中',
+  active: '生效中',
+  failed: '开通失败',
+  expired: '已失效',
+  closed: '已关闭',
+}
+
+export const packageTypeLabels = {
+  time_based: '包时型',
+  balance: '余额 / 次数型',
+}
+
+export const userTypeLabels = {
+  0: '包时型',
+  1: '次数型',
+}
+
 export const visibilityFields = [
   { name: 'outip', label: '真实 IP' },
   { name: 'lsp', label: '运营商' },
   { name: 'prov', label: '省份' },
   { name: 'city', label: '城市' },
-  { name: 'endtime', label: '有效时间' },
-  { name: 'ifs', label: '当日去重' },
+  { name: 'endtime', label: '结束时间' },
+  { name: 'ifs', label: '去重' },
 ]
 
-// 模块功能：供应商 IP 返回格式选项。
 export const ipTypeOptions = [
   { value: '0', label: 'JSON' },
   { value: '1', label: 'CRLF 换行' },
@@ -81,9 +98,8 @@ export const ipTypeOptions = [
   { value: '4', label: '逗号分隔' },
 ]
 
-// 模块功能：用户中心侧边栏导航配置。
 export const userCenterNavItems = [
-  { to: appRoutes.userCenterCredentials, label: 'API 凭据' },
+  { to: appRoutes.userCenterCredentials, label: '订单 API' },
   { to: appRoutes.userCenterOverview, label: '账户概览' },
   { to: appRoutes.userCenterProfile, label: '基础资料' },
   { to: appRoutes.userCenterSecurity, label: '安全设置' },
@@ -93,20 +109,70 @@ export const userCenterNavItems = [
   { to: appRoutes.userCenterApiReference, label: '接口参考' },
 ]
 
-// 模块功能：从接口结果里读取提示文案，没有则使用页面传入的兜底文案。
 export function getMessage(result, fallback) {
   return result?.message || fallback
 }
 
-// 供应商返回是 snake_case，页面状态使用 camelCase；这里做一次边界转换。
+function normalizeSettings(settings, fallbackSettings = initialSettingsForm) {
+  return {
+    ...fallbackSettings,
+    ...Object.fromEntries(
+      Object.entries(settings || {}).map(([key, value]) => [key, value == null ? fallbackSettings[key] : String(value)]),
+    ),
+  }
+}
+
+function getDisplayLimitLabel(data, currentAccount) {
+  if (data.displayLimitLabel) {
+    return data.displayLimitLabel
+  }
+
+  const userType = data.userType ?? data.settings?.userType ?? currentAccount.userType ?? currentAccount.settings?.userType
+  return Number(userType) === 0 ? '每日次数上限' : '总次数'
+}
+
 export function normalizeAccountData(result, currentAccount) {
-  const userData = result?.data?.user_data || {}
+  const data = result?.data || {}
+  const settings = normalizeSettings(data.settings, currentAccount.settings || initialSettingsForm)
+  const whitelist = data.whitelist || data.list || currentAccount.whitelist || []
+  const leftNum = data.leftNum ?? data.remainingQuota ?? currentAccount.leftNum
+  const allNum = data.allNum ?? data.totalQuota ?? currentAccount.allNum
 
   return {
     ...currentAccount,
-    ...userData,
-    whitelist: result?.data?.whitelist || currentAccount.whitelist,
-    leftNum: userData.left_num ?? currentAccount.leftNum,
-    allNum: userData.all_num ?? currentAccount.allNum,
+    ...data,
+    settings,
+    whitelist,
+    userType: data.userType ?? data.settings?.userType ?? currentAccount.userType,
+    dayfetchlimit: data.dayfetchlimit ?? data.settings?.dayfetchlimit ?? currentAccount.dayfetchlimit,
+    displayLimitLabel: getDisplayLimitLabel(data, currentAccount),
+    leftNum,
+    allNum,
+    remainingQuota: data.remainingQuota ?? leftNum,
+    totalQuota: data.totalQuota ?? allNum,
   }
+}
+
+export function normalizeOrderList(result) {
+  const list = result?.data?.list || []
+
+  return list.map((item) =>
+    normalizeAccountData(
+      {
+        data: {
+          ...item,
+          settings: item.settings || { userType: item.userType, dayfetchlimit: item.dayfetchlimit },
+          whitelist: item.whitelist || [],
+        },
+      },
+      sampleAccount,
+    ),
+  )
+}
+
+export function parseIps(value) {
+  return value
+    .split(/[\s,，;；]+/)
+    .map((item) => item.trim())
+    .filter(Boolean)
 }

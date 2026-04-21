@@ -117,6 +117,20 @@
     transform 180ms ease;
 }
 
+.auth-input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.auth-input-row .ghost-button {
+  min-height: 54px;
+  border: 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
 .auth-field input:focus {
   border-color: rgba(13, 110, 253, 0.56);
   box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
@@ -184,5 +198,9 @@
   .auth-copy h1 {
     max-width: none;
     font-size: clamp(2rem, 10vw, 3rem);
+  }
+
+  .auth-input-row {
+    grid-template-columns: 1fr;
   }
 }
