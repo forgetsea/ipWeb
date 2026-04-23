@@ -1,11 +1,34 @@
-// 文件用途：全站顶部导航栏，包含品牌、主导航和登录注册入口。
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { appRoutes } from '../../router'
 
-// 模块功能：在桌面端展示横向导航，在移动端管理折叠菜单开关。
 function SiteHeader({ navItems }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const getNavItem = (item) => (typeof item === 'string' ? { label: item, href: '#!' } : item)
+
+  const renderNavItem = (item, onClick) => {
+    const navItem = getNavItem(item)
+
+    if (navItem.to) {
+      return (
+        <Link key={navItem.label} to={navItem.to} className="nav-link" onClick={onClick}>
+          {navItem.label}
+        </Link>
+      )
+    }
+
+    return (
+      <a
+        key={navItem.label}
+        href={navItem.href ?? '#!'}
+        className="nav-link"
+        onClick={onClick}
+      >
+        {navItem.label}
+      </a>
+    )
+  }
 
   useEffect(() => {
     const closeMenu = () => {
@@ -54,11 +77,7 @@ function SiteHeader({ navItems }) {
         </button>
 
         <nav className="site-nav desktop-nav" aria-label="主导航">
-          {navItems.map((item) => (
-            <a key={item} href="#!" className="nav-link">
-              {item}
-            </a>
-          ))}
+          {navItems.map((item) => renderNavItem(item))}
         </nav>
 
         <div className="header-actions desktop-actions">
@@ -79,11 +98,7 @@ function SiteHeader({ navItems }) {
         className={`mobile-menu section-container${isMenuOpen ? ' is-open' : ''}`}
       >
         <nav className="site-nav mobile-nav" aria-label="移动端主导航">
-          {navItems.map((item) => (
-            <a key={item} href="#!" className="nav-link" onClick={() => setIsMenuOpen(false)}>
-              {item}
-            </a>
-          ))}
+          {navItems.map((item) => renderNavItem(item, () => setIsMenuOpen(false)))}
         </nav>
 
         <div className="header-actions mobile-actions">

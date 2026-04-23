@@ -3,6 +3,12 @@
 // 模块功能：为导航、按钮和路由配置提供统一的路径来源。
 export const appRoutes = {
   home: '/',
+  package: '/package',
+  packageBalance: '/package/balance',
+  packageTimed: '/package/timed',
+  packageFixed: '/package/fixed-ip',
+  packageEnterprise: '/package/enterprise',
+  getIp: '/getip',
   login: '/login',
   register: '/register',
   userCenter: '/user-center',

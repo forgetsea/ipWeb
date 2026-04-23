@@ -1,0 +1,311 @@
+.getip-page {
+  min-height: 100vh;
+}
+
+.getip-main {
+  padding: 132px 0 48px;
+}
+
+.getip-layout {
+  display: grid;
+  grid-template-columns: 168px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.getip-sidebar {
+  position: sticky;
+  top: 118px;
+  display: grid;
+  gap: 14px;
+  padding: 16px 14px;
+  border: 1px solid rgba(13, 36, 77, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.84);
+  box-shadow: 0 18px 36px rgba(16, 47, 102, 0.08);
+  backdrop-filter: blur(8px);
+}
+
+.getip-sidebar p {
+  margin: 0;
+  color: var(--muted-color);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.getip-side-nav {
+  display: grid;
+  gap: 8px;
+}
+
+.getip-side-nav a {
+  display: block;
+  padding: 10px 0 10px 12px;
+  border-left: 2px solid rgba(13, 36, 77, 0.08);
+  color: inherit;
+  text-decoration: none;
+}
+
+.getip-side-nav a:hover {
+  border-left-color: rgba(13, 110, 253, 0.28);
+}
+
+.getip-side-nav strong {
+  color: var(--heading-color);
+  font-size: 0.95rem;
+}
+
+.getip-panel-head p,
+.getip-result-card span,
+.getip-hero-stat span {
+  color: var(--muted-color);
+}
+
+.getip-content {
+  display: grid;
+  gap: 24px;
+}
+
+.getip-anchor-section {
+  scroll-margin-top: 112px;
+}
+
+.getip-hero-banner,
+.getip-config-panel,
+.getip-result-config-panel {
+  border: 1px solid rgba(13, 36, 77, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 40px rgba(16, 47, 102, 0.08);
+}
+
+.getip-hero-banner {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+  gap: 24px;
+  padding: 34px;
+  background:
+    radial-gradient(circle at top left, rgba(22, 119, 255, 0.12), transparent 28%),
+    radial-gradient(circle at 92% 18%, rgba(22, 179, 154, 0.14), transparent 20%),
+    rgba(255, 255, 255, 0.94);
+}
+
+.getip-hero-copy h1 {
+  margin: 16px 0 14px;
+  color: var(--heading-color);
+  font-size: clamp(2.4rem, 4vw, 4rem);
+  line-height: 1.02;
+}
+
+.getip-hero-copy p {
+  max-width: 58ch;
+  margin: 0;
+  color: var(--muted-strong);
+  line-height: 1.75;
+}
+
+.getip-hero-stat-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.getip-hero-stat {
+  display: grid;
+  gap: 8px;
+  min-height: 104px;
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(242, 247, 255, 0.92);
+}
+
+.getip-hero-stat strong {
+  color: var(--heading-color);
+  font-size: 1.45rem;
+}
+
+.getip-config-panel,
+.getip-result-config-panel {
+  display: grid;
+  gap: 22px;
+  padding: 28px;
+}
+
+.getip-panel-head h2 {
+  margin: 8px 0 0;
+  color: var(--heading-color);
+  font-size: 1.65rem;
+}
+
+.getip-panel-head p {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.getip-package-card,
+.getip-filter-group,
+.getip-result-card,
+.getip-code-card,
+.getip-doc-card {
+  padding: 18px;
+  border: 1px solid rgba(13, 36, 77, 0.08);
+  border-radius: 14px;
+  background: rgba(245, 249, 255, 0.78);
+}
+
+.getip-package-card {
+  display: grid;
+  gap: 8px;
+  background: linear-gradient(135deg, rgba(13, 110, 253, 0.08), rgba(22, 179, 154, 0.08));
+}
+
+.getip-package-card strong,
+.getip-filter-group strong,
+.getip-doc-card strong,
+.getip-code-head strong {
+  color: var(--heading-color);
+}
+
+.getip-package-card p,
+.getip-doc-card p {
+  margin: 0;
+  color: var(--muted-strong);
+  line-height: 1.7;
+}
+
+.getip-chip-row,
+.getip-field-list,
+.getip-config-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.getip-chip {
+  min-height: 42px;
+  padding: 0 16px;
+  border: 1px solid rgba(13, 36, 77, 0.1);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--muted-strong);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.getip-chip.is-active,
+.getip-checkbox.is-active {
+  border-color: rgba(13, 110, 253, 0.24);
+  background: rgba(13, 110, 253, 0.08);
+  color: var(--heading-color);
+}
+
+.getip-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.getip-field {
+  display: grid;
+  gap: 10px;
+}
+
+.getip-field span {
+  color: var(--heading-color);
+  font-weight: 700;
+}
+
+.getip-field input,
+.getip-field select {
+  min-height: 48px;
+  padding: 0 14px;
+  border: 1px solid rgba(13, 36, 77, 0.12);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--heading-color);
+}
+
+.getip-field-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.getip-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid rgba(13, 36, 77, 0.08);
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--muted-strong);
+}
+
+.getip-checkbox input {
+  margin: 0;
+}
+
+.getip-result-card code,
+.getip-result-card pre,
+.getip-code-card pre {
+  display: block;
+  margin: 10px 0 0;
+  padding: 16px;
+  overflow: auto;
+  border-radius: 12px;
+  background: #0f2b67;
+  color: #f6fbff;
+  font-size: 0.92rem;
+  line-height: 1.65;
+}
+
+.getip-doc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.getip-code-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.getip-code-head span {
+  color: var(--muted-color);
+}
+
+@media (max-width: 1080px) {
+  .getip-layout,
+  .getip-hero-banner,
+  .getip-doc-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .getip-sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 720px) {
+  .getip-main {
+    padding-top: 116px;
+  }
+
+  .getip-hero-banner,
+  .getip-config-panel,
+  .getip-result-config-panel {
+    padding: 22px;
+  }
+
+  .getip-form-grid,
+  .getip-field-list {
+    grid-template-columns: 1fr;
+  }
+}

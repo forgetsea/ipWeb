@@ -1,22 +1,55 @@
-import { useEffect, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { updateOrderLimit, updateOrderSettings } from '../../services/userCenterService'
 import { initialSettingsForm, ipTypeOptions, visibilityFields } from './userCenterData'
 import { useUserCenter } from './useUserCenter'
 
-function UserOrderSettingsPage() {
-  const { account, isSubmitting, requireOrderNo, runAction, setStatus, updateForm } = useUserCenter()
-  const [settingsForm, setSettingsForm] = useState(initialSettingsForm)
-  const [limitForm, setLimitForm] = useState({ dayfetchlimit: '0' })
+function normalizeSettingsForm(account) {
+  return {
+    ...initialSettingsForm,
+    ...Object.fromEntries(Object.entries(account.settings || {}).map(([key, value]) => [key, String(value)])),
+  }
+}
 
-  useEffect(() => {
-    setSettingsForm({
-      ...initialSettingsForm,
-      ...Object.fromEntries(Object.entries(account.settings || {}).map(([key, value]) => [key, String(value)])),
-    })
-    setLimitForm({
-      dayfetchlimit: String(account.dayfetchlimit ?? account.settings?.dayfetchlimit ?? 0),
-    })
-  }, [account])
+function normalizeLimitForm(account) {
+  return {
+    dayfetchlimit: String(account.dayfetchlimit ?? account.settings?.dayfetchlimit ?? 0),
+  }
+}
+
+function UserOrderSettingsPage() {
+  const { account, isSubmitting, requireOrderNo, runAction, setStatus } = useUserCenter()
+  const [settingsDrafts, setSettingsDrafts] = useState({})
+  const [limitDrafts, setLimitDrafts] = useState({})
+
+  const currentOrderNo = account.orderNo || ''
+  const defaultSettingsForm = useMemo(() => normalizeSettingsForm(account), [account])
+  const defaultLimitForm = useMemo(() => normalizeLimitForm(account), [account])
+  const settingsForm = currentOrderNo ? settingsDrafts[currentOrderNo] || defaultSettingsForm : defaultSettingsForm
+  const limitForm = currentOrderNo ? limitDrafts[currentOrderNo] || defaultLimitForm : defaultLimitForm
+
+  const handleSettingsChange = (event) => {
+    const { name, value } = event.target
+
+    setSettingsDrafts((current) => ({
+      ...current,
+      [currentOrderNo]: {
+        ...settingsForm,
+        [name]: value,
+      },
+    }))
+  }
+
+  const handleLimitChange = (event) => {
+    const { name, value } = event.target
+
+    setLimitDrafts((current) => ({
+      ...current,
+      [currentOrderNo]: {
+        ...limitForm,
+        [name]: value,
+      },
+    }))
+  }
 
   const handleSettingsSubmit = (event) => {
     event.preventDefault()
@@ -30,6 +63,13 @@ function UserOrderSettingsPage() {
       action: () => updateOrderSettings({ ...order, ...settingsForm }),
       successMessage: '订单设置已保存。',
       updateAccount: true,
+      afterSuccess: () => {
+        setSettingsDrafts((current) => {
+          const next = { ...current }
+          delete next[order.orderNo]
+          return next
+        })
+      },
     })
   }
 
@@ -52,6 +92,13 @@ function UserOrderSettingsPage() {
       action: () => updateOrderLimit({ ...order, dayfetchlimit: nextLimit }),
       successMessage: '次数上限已更新。',
       updateAccount: true,
+      afterSuccess: () => {
+        setLimitDrafts((current) => {
+          const next = { ...current }
+          delete next[order.orderNo]
+          return next
+        })
+      },
     })
   }
 
@@ -81,7 +128,7 @@ function UserOrderSettingsPage() {
           {visibilityFields.map((field) => (
             <label key={field.name} className="user-switch">
               <span>{field.label}</span>
-              <select name={field.name} value={settingsForm[field.name]} onChange={updateForm(setSettingsForm)}>
+              <select name={field.name} value={settingsForm[field.name]} onChange={handleSettingsChange}>
                 <option value="0">不显示</option>
                 <option value="1">显示</option>
               </select>
@@ -92,7 +139,7 @@ function UserOrderSettingsPage() {
         <div className="user-form-grid">
           <label className="user-field">
             <span>返回格式</span>
-            <select name="iptype" value={settingsForm.iptype} onChange={updateForm(setSettingsForm)}>
+            <select name="iptype" value={settingsForm.iptype} onChange={handleSettingsChange}>
               {ipTypeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
                   {option.label}
@@ -102,13 +149,7 @@ function UserOrderSettingsPage() {
           </label>
           <label className="user-field">
             <span>Session 时间</span>
-            <input
-              name="sessTime"
-              type="number"
-              min="1"
-              value={settingsForm.sessTime}
-              onChange={updateForm(setSettingsForm)}
-            />
+            <input name="sessTime" type="number" min="1" value={settingsForm.sessTime} onChange={handleSettingsChange} />
           </label>
           <button type="submit" className="primary-button user-form-submit">
             {isSubmitting === 'settings' ? '提交中...' : '保存订单设置'}
@@ -119,13 +160,7 @@ function UserOrderSettingsPage() {
       <form className="user-inline-form" onSubmit={handleLimitSubmit}>
         <label className="user-field">
           <span>{account.displayLimitLabel || '次数上限'}</span>
-          <input
-            name="dayfetchlimit"
-            type="number"
-            min="0"
-            value={limitForm.dayfetchlimit}
-            onChange={updateForm(setLimitForm)}
-          />
+          <input name="dayfetchlimit" type="number" min="0" value={limitForm.dayfetchlimit} onChange={handleLimitChange} />
         </label>
         <button type="submit" className="primary-button user-form-submit">
           {isSubmitting === 'limit' ? '提交中...' : '保存次数上限'}

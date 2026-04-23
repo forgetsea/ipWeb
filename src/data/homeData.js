@@ -1,34 +1,44 @@
-// 文件用途：首页静态展示数据，集中维护导航、套餐、场景和指标文案。
+import { appRoutes } from '../router'
 
-// 模块功能：主导航菜单文案。
-export const navItems = ['首页', '热门套餐', '产品介绍', '安全合规', '企业服务', '关于我们']
+export const navItems = [
+  { label: '首页', to: appRoutes.home },
+  { label: '套餐购买', to: appRoutes.package },
+  { label: '提取IP', to: appRoutes.getIp },
+  { label: '产品介绍', href: '#features' },
+  { label: '安全合规', href: '#news' },
+  { label: '企业服务', href: '#enterprise' },
+]
 
-// 模块功能：首页产品能力卡片数据。
 export const featureItems = [
   {
     title: '海外静态住宅代理',
-    bullets: ['纯净资源，高匿名性，可用率高达99.9%', 
-      '真实IP地址，长效固定，超强稳定性', 
-      '海量全球节点，支持业务快速切换出口', 
-      '模拟卖点四，可填写业务场景'],
+    bullets: [
+      '纯净资源，高匿名性，可用率高达 99.9%',
+      '真实 IP 地址，长效固定，稳定性强',
+      '全球节点丰富，支持业务灵活切换出口',
+      '适合账号运营、地区验证等场景',
+    ],
   },
   {
     title: '海外动态住宅代理',
-    bullets: ['来源纯净，真实高匿，稳定性强', 
-      '高带宽，高连通率，可自动切换IP', 
-      '千万级优质资源池', 
-      'API接口丰富，调用方便快捷'],
+    bullets: [
+      '来源纯净，真实高匿，稳定性强',
+      '高带宽高连通率，支持自动切换 IP',
+      '千万级优质资源池',
+      'API 接口丰富，调用便捷',
+    ],
   },
   {
     title: '海外动态 IDC 代理',
-    bullets: ['超高速数据传输，不限流量', 
-      'IDC数据中心原生IP', 
-      '网络可用率高达99.9%', 
-      '多协议全面支持'],
+    bullets: [
+      '超高速数据传输，不限流量',
+      'IDC 数据中心原生 IP',
+      '网络可用率高达 99.9%',
+      '支持 HTTP、HTTPS、SOCKS 多协议',
+    ],
   },
 ]
 
-// 模块功能：首页热门套餐卡片数据。
 export const planItems = [
   {
     name: '海外动态 IDC 代理',
@@ -50,11 +60,10 @@ export const planItems = [
   },
 ]
 
-// 模块功能：首页业务场景标签数据。
 export const sceneItems = [
   '跨境电商',
   '品牌保护',
-  '市场调查',
+  '市场调研',
   '数据采集',
   '聚合比价',
   'SEO 优化',
@@ -62,24 +71,16 @@ export const sceneItems = [
   '社媒营销',
 ]
 
-// 模块功能：首页合作品牌展示数据。
 export const logoItems = ['Amazon', 'TikTok', 'Shopee', 'eBay', 'Google', 'Meta']
 
-// 模块功能：首页安全合规卡片标题数据。
-export const articleItems = [
-  '100% 合规运营',
-  '24h 安全健康',
-  '0 个安全事故',
-]
+export const articleItems = ['100% 合规运营', '24h 安全健康', '0 个安全事故']
 
-// 模块功能：首页首屏关键指标数据。
 export const heroStats = [
   { value: '99.9%', label: '可用率支持' },
   { value: '200+', label: '覆盖国家地区' },
   { value: '24h', label: '安全健康守护' },
 ]
 
-// 模块功能：首页企业定制区指标数据。
 export const enterpriseMetrics = [
   { value: '5000万+', label: '可调度代理资源' },
   { value: '7*24', label: '小时响应支持' },

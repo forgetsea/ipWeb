@@ -30,7 +30,7 @@ function UserExtractPage() {
         </button>
       </div>
 
-      <p>最新文档未提供前端直接提取 IP 的业务接口。页面改为读取平台 API 文档摘要和代码示例，实际 IP 提取由订单 API 凭证在服务端维护。</p>
+      <p>提取IP API 文档。</p>
     </section>
   )
 }

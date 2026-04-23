@@ -27,11 +27,19 @@ function HomePage() {
       <SiteHeader navItems={navItems} />
       <main className="home-main">
         <HeroSection stats={heroStats} />
-        <FeaturesSection items={featureItems} />
+        <div id="features">
+          <FeaturesSection items={featureItems} />
+        </div>
         <SceneStrip scenes={sceneItems} />
-        <PlansSection plans={planItems} />
-        <EnterpriseSection metrics={enterpriseMetrics} />
-        <NewsSection articles={articleItems} />
+        <div id="plans">
+          <PlansSection plans={planItems} />
+        </div>
+        <div id="enterprise">
+          <EnterpriseSection metrics={enterpriseMetrics} />
+        </div>
+        <div id="news">
+          <NewsSection articles={articleItems} />
+        </div>
         <BrandsSection logos={logoItems} />
       </main>
       <SiteFooter />

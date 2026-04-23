@@ -14,7 +14,7 @@ const pageContent = {
   login: {
     eyebrow: 'User Access',
     title: '登录用户中心',
-    description: '使用平台账号登录后，用户中心请求会自动携带 Bearer token。',
+    description: '使用平台账号登录',
     submitLabel: '立即登录',
     switchLabel: '还没有账号？',
     switchHref: appRoutes.register,
@@ -171,16 +171,16 @@ function AuthPage({ mode }) {
 
             <div className="auth-highlights" aria-hidden="true">
               <div>
-                <strong>接口</strong>
-                <span>{content.endpoint}</span>
+                <strong>安全</strong>
+                <span>安全保障</span>
               </div>
               <div>
-                <strong>字段</strong>
-                <span>{mode === 'register' ? 'email / verifyCode / password' : 'account / password'}</span>
+                <strong>合规</strong>
+                <span>{mode === 'register' ? '加入我们' : '使用服务'}</span>
               </div>
               <div>
-                <strong>认证</strong>
-                <span>成功后保存 token，后续请求自动携带 Authorization</span>
+                <strong>优质</strong>
+                <span></span>
               </div>
             </div>
           </div>

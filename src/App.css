@@ -1,7 +1,7 @@
 /* 文件用途：应用级布局工具样式，提供通用页面宽度容器。 */
 
 .section-container {
-  width: min(1200px, calc(100% - 32px));
+  width: min(1440px, calc(100% - 10vw));
   margin-inline: auto;
 }
 

@@ -99,14 +99,13 @@ export const ipTypeOptions = [
 ]
 
 export const userCenterNavItems = [
-  { to: appRoutes.userCenterCredentials, label: '订单 API' },
-  { to: appRoutes.userCenterOverview, label: '账户概览' },
   { to: appRoutes.userCenterProfile, label: '基础资料' },
+  { to: appRoutes.userCenterOverview, label: '账户概览' },
+  { to: appRoutes.userCenterCredentials, label: '套餐列表' },
   { to: appRoutes.userCenterSecurity, label: '安全设置' },
   { to: appRoutes.userCenterOrders, label: '订单设置' },
   { to: appRoutes.userCenterWhitelist, label: '白名单' },
   { to: appRoutes.userCenterExtract, label: 'IP 提取' },
-  { to: appRoutes.userCenterApiReference, label: '接口参考' },
 ]
 
 export function getMessage(result, fallback) {
