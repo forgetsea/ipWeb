@@ -1,8 +1,8 @@
-/* 文件用途：全站基础样式，定义字体、背景、颜色变量和元素默认行为。 */
+@import "tailwindcss";
 
 :root {
   font-family:
-    'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   line-height: 1.5;
   font-weight: 400;
   color: #22324d;
@@ -16,6 +16,17 @@
   --heading-color: #10203a;
   --muted-color: #73819a;
   --muted-strong: #50617f;
+  --background: #f6faff;
+  --foreground: #22324d;
+  --card: rgba(255, 255, 255, 0.82);
+  --card-foreground: #10203a;
+  --primary: #1677ff;
+  --primary-foreground: #ffffff;
+  --secondary: #eef5ff;
+  --secondary-foreground: #12376b;
+  --border: rgba(13, 36, 77, 0.08);
+  --ring: rgba(22, 119, 255, 0.28);
+  --radius: 1.5rem;
 }
 
 * {
@@ -60,6 +71,9 @@ button {
 h1,
 h2,
 h3,
+h4,
+h5,
+h6,
 p {
   margin-top: 0;
 }
@@ -68,4 +82,58 @@ p {
   min-height: 100vh;
   max-width: 100%;
   overflow-x: clip;
+}
+
+@layer base {
+  * {
+    @apply border-[color:var(--border)];
+  }
+
+  body {
+    @apply text-[color:var(--foreground)];
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    color: var(--heading-color);
+  }
+}
+
+@layer components {
+  .section-container {
+    width: min(1440px, calc(100% - 2rem));
+    margin-inline: auto;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full bg-[#0d6efd]/10 px-3 py-1.5 text-xs font-extrabold uppercase tracking-[0.18em] text-[#0d6efd];
+  }
+
+  .primary-button {
+    @apply inline-flex min-h-11 items-center justify-center rounded-xl bg-gradient-to-r from-[#1677ff] to-[#0f66db] px-5 py-3 font-semibold text-white shadow-[0_18px_36px_rgba(22,119,255,0.22)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_22px_44px_rgba(22,119,255,0.28)];
+  }
+
+  .ghost-button {
+    @apply inline-flex min-h-11 items-center justify-center rounded-xl border border-[#1677ff]/15 bg-white/80 px-5 py-3 font-semibold text-slate-800 shadow-[0_12px_30px_rgba(15,23,42,0.08)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-white;
+  }
+
+  .primary-button.full {
+    @apply w-full;
+  }
+}
+
+@media (min-width: 768px) {
+  .section-container {
+    width: min(1440px, calc(100% - 4rem));
+  }
+}
+
+@media (min-width: 1280px) {
+  .section-container {
+    width: min(1440px, calc(100% - 6rem));
+  }
 }

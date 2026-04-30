@@ -1,8 +1,8 @@
-// 文件用途：首页热门套餐区，展示套餐价格和卖点。
 import SectionHeading from '../common/SectionHeading'
 import SectionShell from '../common/SectionShell'
+import { buttonVariants } from '../ui/button-variants'
+import { Card, CardContent } from '../ui/card'
 
-// 模块功能：把套餐数据渲染为可咨询的价格卡片。
 function PlansSection({ plans }) {
   return (
     <SectionShell id="plans">
@@ -12,23 +12,26 @@ function PlansSection({ plans }) {
         description="灵活的计费方式，为多场景适配设计，满足多元业务需求。"
       />
 
-      <div className="plans-grid">
+      <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
         {plans.map((plan) => (
-          <article key={plan.name} className="home-card plan-card">
-            <p className="plan-name">{plan.name}</p>
-            <div className="plan-price">
-              <strong>{plan.price}</strong>
-              <span>{plan.unit}</span>
-            </div>
-            <ul>
-              {plan.points.map((point) => (
-                <li key={point}>{point}</li>
-              ))}
-            </ul>
-            <a href="#contact" className="primary-button full">
-              立即咨询
-            </a>
-          </article>
+          <Card key={plan.name} className="relative overflow-hidden rounded-[30px] border-white/70">
+            <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-[#0d6efd] to-[#16b39a]" />
+            <CardContent className="p-6 sm:p-7">
+              <p className="text-base font-black text-slate-900">{plan.name}</p>
+              <div className="mt-5 flex items-end gap-2">
+                <strong className="text-5xl font-black leading-none text-slate-900">{plan.price}</strong>
+                <span className="pb-1 text-sm text-slate-500">{plan.unit}</span>
+              </div>
+              <ul className="mt-6 space-y-3 pl-5 text-sm leading-7 text-[color:var(--muted-strong)] marker:text-[#1677ff]">
+                {plan.points.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+              <a href="#contact" className={`${buttonVariants({ fullWidth: true })} mt-6`}>
+                立即咨询
+              </a>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </SectionShell>

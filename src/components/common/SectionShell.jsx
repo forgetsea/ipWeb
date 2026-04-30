@@ -1,11 +1,15 @@
-// 文件用途：通用区块容器组件，复用 section 与页面宽度约束。
+import { cn } from '../../lib/utils'
 
-// 模块功能：组合基础容器类名，并允许页面传入扩展 className 和 id。
 function SectionShell({ children, className = '', id }) {
-  const classes = ['section-shell', 'section-container', className].filter(Boolean).join(' ')
-
   return (
-    <section className={classes} id={id}>
+    <section
+      id={id}
+      className={cn(
+        'section-container relative pt-10 sm:pt-12 lg:pt-14',
+        "before:absolute before:left-0 before:top-0 before:h-px before:w-[min(140px,28vw)] before:bg-gradient-to-r before:from-[#0d6efd]/35 before:to-transparent",
+        className,
+      )}
+    >
       {children}
     </section>
   )

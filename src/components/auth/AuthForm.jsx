@@ -1,3 +1,6 @@
+import { buttonVariants } from '../ui/button-variants'
+import { StatusMessage, TextInput } from '../ui/surface'
+
 function AuthForm({
   fields,
   isFieldActionBusy,
@@ -10,12 +13,12 @@ function AuthForm({
   values,
 }) {
   return (
-    <form className="auth-form" onSubmit={onSubmit}>
+    <form className="grid gap-5" onSubmit={onSubmit}>
       {fields.map((field) => (
-        <label key={field.name} className="auth-field">
-          <span>{field.label}</span>
-          <div className={field.actionLabel ? 'auth-input-row' : undefined}>
-            <input
+        <label key={field.name} className="grid gap-2.5">
+          <span className="text-sm font-bold text-slate-800">{field.label}</span>
+          <div className={field.actionLabel ? 'grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]' : undefined}>
+            <TextInput
               type={field.type}
               name={field.name}
               placeholder={field.placeholder}
@@ -23,7 +26,11 @@ function AuthForm({
               onChange={onChange}
             />
             {field.actionLabel ? (
-              <button type="button" className="ghost-button" onClick={() => onFieldAction(field.name)}>
+              <button
+                type="button"
+                className={buttonVariants({ variant: 'secondary' })}
+                onClick={() => onFieldAction(field.name)}
+              >
                 {isFieldActionBusy === field.name ? '发送中...' : field.actionLabel}
               </button>
             ) : null}
@@ -31,13 +38,11 @@ function AuthForm({
         </label>
       ))}
 
-      {status.message ? (
-        <div className={`auth-status is-${status.type}`} role="status">
-          {status.message}
-        </div>
-      ) : null}
+      <StatusMessage type={status.type} role="status">
+        {status.message}
+      </StatusMessage>
 
-      <button type="submit" className="primary-button auth-submit" disabled={isSubmitting}>
+      <button type="submit" className={buttonVariants({ fullWidth: true, size: 'lg' })} disabled={isSubmitting}>
         {isSubmitting ? '提交中...' : submitLabel}
       </button>
     </form>

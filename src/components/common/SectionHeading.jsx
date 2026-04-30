@@ -1,12 +1,19 @@
-// 文件用途：通用区块标题组件，统一首页各 section 的标题结构。
+function SectionHeading({ eyebrow, title, description, align = 'left' }) {
+  const center = align === 'center'
 
-// 模块功能：按需渲染 eyebrow、标题和描述，保持区块标题样式一致。
-function SectionHeading({ eyebrow, title, description }) {
   return (
-    <header className="section-heading">
-      {eyebrow ? <span className="eyebrow">{eyebrow}</span> : null}
-      <h2>{title}</h2>
-      {description ? <p>{description}</p> : null}
+    <header className={`mb-7 max-w-3xl ${center ? 'mx-auto text-center' : ''}`}>
+      {eyebrow ? (
+        <span className={`eyebrow ${center ? 'justify-center' : ''}`}>{eyebrow}</span>
+      ) : null}
+      <h2 className="mt-4 text-3xl font-black leading-tight text-slate-900 sm:text-4xl lg:text-[2.6rem]">
+        {title}
+      </h2>
+      {description ? (
+        <p className="mt-3 text-base leading-7 text-[color:var(--muted-strong)] sm:text-lg">
+          {description}
+        </p>
+      ) : null}
     </header>
   )
 }

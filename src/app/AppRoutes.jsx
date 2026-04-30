@@ -9,6 +9,7 @@ import TimedPackagePage from '../pages/package/TimedPackagePage'
 import LoginPage from '../pages/auth/LoginPage'
 import RegisterPage from '../pages/auth/RegisterPage'
 import GetIpPage from '../pages/GetIpPage'
+import PostalCodeDocPage from '../pages/PostalCodeDocPage'
 import UserApiReferencePage from '../pages/user/UserApiReferencePage'
 import UserCenterPage from '../pages/user/UserCenterPage'
 import UserCenterWorkspace from '../pages/user/UserCenterWorkspace'
@@ -35,6 +36,7 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/getip" element={<GetIpPage />} />
+      <Route path="/postal-codes" element={<PostalCodeDocPage />} />
       <Route path="/user-center" element={<UserCenterPage />}>
         {/* 用户中心共用同一份账户、凭据和提交状态，由 Workspace 再分发给子页面。 */}
         <Route element={<UserCenterWorkspace />}>

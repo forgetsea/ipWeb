@@ -1,14 +1,15 @@
-// 文件用途：首页首屏组件，展示主标语、核心服务卡片和关键指标。
 import { Link } from 'react-router-dom'
 import { appRoutes } from '../../router'
 import rocket from '../../assets/rocket.png'
+import { buttonVariants } from '../ui/button-variants'
+import { Card, CardContent } from '../ui/card'
+import { cn } from '../../lib/utils'
 
-// 模块功能：首屏右侧核心服务卡片数据。
 const serviceCards = [
   {
     icon: '全',
     title: '全球化网络',
-    description: '搭建完善的海外访问网络，覆盖多业务场景。',
+    description: '构建完善的海外访问网络，覆盖多业务场景。',
     tone: 'light',
   },
   {
@@ -31,61 +32,111 @@ const serviceCards = [
   },
 ]
 
-// 模块功能：为首屏指标卡片提供简短视觉标识。
 const statIcons = ['稳', '源', '护']
 
-// 模块功能：渲染首页首屏的行动入口、服务摘要和平台指标。
 function HeroSection({ stats }) {
   return (
-    <section className="hero-section emphasis-section section-container">
-      <div className="hero-copy emphasis-copy">
-        <span className="eyebrow hero-eyebrow">
-          <img src={rocket} alt="" className="hero-eyebrow-icon" />
+    <section className="section-container relative grid gap-6 pt-4 lg:grid-cols-[minmax(0,1.02fr)_minmax(0,0.98fr)] lg:items-start">
+      <div className="absolute inset-x-0 top-0 -z-10 h-full rounded-[36px] bg-[radial-gradient(circle_at_8%_14%,rgba(13,110,253,0.12),transparent_28%),radial-gradient(circle_at_92%_20%,rgba(22,194,163,0.12),transparent_22%)]" />
+
+      <div className="rounded-[36px] border border-white/70 bg-white/55 p-6 shadow-[0_18px_46px_rgba(15,23,42,0.06)] backdrop-blur-sm sm:p-8 lg:p-10">
+        <span className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#1677ff] to-[#16b39a] px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-white shadow-[0_12px_24px_rgba(22,119,255,0.22)]">
+          <img src={rocket} alt="" className="h-4 w-4 object-contain" />
           赋能未来 链接世界
         </span>
-        <h1>
+
+        <h1 className="mt-5 max-w-[13ch] text-4xl font-black leading-tight text-[#0f2b67] sm:text-5xl lg:text-[3.25rem]">
           一站式企业级
           <br />
           IP代理服务平台
         </h1>
-        <p className="hero-description">
-          致力于提供海外网络访问综合性解决方案，搭建完善的全球化网络，聚焦安全稳定的 IP 服务。
+
+        <p className="mt-5 max-w-2xl text-base leading-8 text-[color:var(--muted-strong)]">
+          致力于提供海外网络访问综合性解决方案，构建完善的全球化网络，聚焦安全稳定的 IP
+          服务。
         </p>
 
-        <div className="hero-actions">
-          <Link to={appRoutes.buy} className="primary-button hero-primary-button">
+        <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+          <Link to={appRoutes.buy} className={buttonVariants({ size: 'lg' })}>
             查看套餐
           </Link>
-          <Link to={appRoutes.ask} className="ghost-button hero-secondary-button">
+          <Link to={appRoutes.ask} className={buttonVariants({ variant: 'outline', size: 'lg' })}>
             企业咨询
           </Link>
         </div>
       </div>
 
-      <div className="hero-visual emphasis-aside">
-        <p className="service-section-title">核心服务</p>
-        <div className="visual-grid">
+      <div className="grid gap-4">
+        <div className="flex items-center gap-2 px-1 text-sm font-bold uppercase tracking-[0.18em] text-[#1677ff]">
+          <span className="h-px w-10 bg-[#1677ff]/35" />
+          核心服务
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
           {serviceCards.map((service) => (
-            <article key={service.title} className={`home-card visual-card is-${service.tone}`}>
-              <span className="service-icon" aria-hidden="true">
-                {service.icon}
-              </span>
-              <h2>{service.title}</h2>
-              <p>{service.description}</p>
-            </article>
+            <Card
+              key={service.title}
+              className={cn(
+                'min-h-44 overflow-hidden rounded-[28px] border-0 shadow-[0_18px_40px_rgba(15,23,42,0.08)] transition duration-200 hover:-translate-y-1',
+                service.tone === 'light' && 'bg-white/82',
+                service.tone === 'primary' && 'bg-[#1677ff] text-white',
+                service.tone === 'dark' && 'bg-[#0f2b67] text-white',
+              )}
+            >
+              <CardContent className="flex h-full flex-col items-start gap-5 p-6">
+                <span
+                  className={cn(
+                    'grid h-11 w-11 place-items-center rounded-2xl text-sm font-black',
+                    service.tone === 'light' && 'bg-[#1677ff]/10 text-[#1677ff]',
+                    service.tone !== 'light' && 'bg-white/16 text-white',
+                  )}
+                >
+                  {service.icon}
+                </span>
+                <div className="space-y-2">
+                  <h2 className={cn('text-lg font-black', service.tone !== 'light' && 'text-white')}>
+                    {service.title}
+                  </h2>
+                  <p
+                    className={cn(
+                      'text-sm leading-7 text-[color:var(--muted-strong)]',
+                      service.tone !== 'light' && 'text-white/80',
+                    )}
+                  >
+                    {service.description}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
 
-      <dl className="hero-stats">
+      <dl className="grid gap-4 lg:col-span-2 lg:grid-cols-3">
         {stats.map((item, index) => (
-          <div key={item.label} className={`metric-card${index === 0 ? ' is-primary' : ''}`}>
-            <span className="stat-icon" aria-hidden="true">
-              {statIcons[index]}
-            </span>
-            <dt>{item.value}</dt>
-            <dd>{item.label}</dd>
-          </div>
+          <Card
+            key={item.label}
+            className={cn(
+              'rounded-[28px] border-0 transition duration-200 hover:-translate-y-1 hover:shadow-[0_20px_42px_rgba(15,23,42,0.12)]',
+              index === 0 ? 'bg-[#1677ff] text-white' : 'bg-white/80',
+            )}
+          >
+            <CardContent className="grid gap-3 p-6">
+              <span
+                className={cn(
+                  'grid h-10 w-10 place-items-center rounded-xl text-sm font-black',
+                  index === 0 ? 'bg-white/16 text-white' : 'bg-[#1677ff]/10 text-[#1677ff]',
+                )}
+              >
+                {statIcons[index]}
+              </span>
+              <dt className={cn('text-3xl font-black', index === 0 ? 'text-white' : 'text-slate-900')}>
+                {item.value}
+              </dt>
+              <dd className={cn('m-0 text-sm', index === 0 ? 'text-white/80' : 'text-slate-500')}>
+                {item.label}
+              </dd>
+            </CardContent>
+          </Card>
         ))}
       </dl>
     </section>

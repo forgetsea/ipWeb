@@ -3,18 +3,17 @@ import { Link, useNavigate } from 'react-router-dom'
 import AuthForm from '../../components/auth/AuthForm'
 import SiteFooter from '../../components/layout/SiteFooter'
 import SiteHeader from '../../components/layout/SiteHeader'
+import { Card, CardContent } from '../../components/ui/card'
 import { authApi } from '../../config/authApi'
 import { navItems } from '../../data/homeData'
 import { appRoutes } from '../../router'
 import { loginUser, registerUser, sendEmailCode } from '../../services/authService'
-import '../../pages/HomePage.css'
-import '../AuthPage.css'
 
 const pageContent = {
   login: {
     eyebrow: 'User Access',
     title: '登录用户中心',
-    description: '使用平台账号登录',
+    description: '使用平台账号登录，继续管理订单、提取 API 与账户设置。',
     submitLabel: '立即登录',
     switchLabel: '还没有账号？',
     switchHref: appRoutes.register,
@@ -41,12 +40,7 @@ const pageContent = {
       { name: 'verifyCode', label: '验证码', type: 'text', placeholder: '请输入邮箱验证码' },
       { name: 'nickname', label: '昵称', type: 'text', placeholder: '选填' },
       { name: 'password', label: '密码', type: 'password', placeholder: '请输入平台登录密码' },
-      {
-        name: 'confirmPassword',
-        label: '确认密码',
-        type: 'password',
-        placeholder: '请再次输入密码',
-      },
+      { name: 'confirmPassword', label: '确认密码', type: 'password', placeholder: '请再次输入密码' },
     ],
     submitAction: registerUser,
     successMessage: '注册成功。',
@@ -72,11 +66,7 @@ function AuthPage({ mode }) {
 
   const handleChange = (event) => {
     const { name, value } = event.target
-
-    setFormValues((current) => ({
-      ...current,
-      [name]: value,
-    }))
+    setFormValues((current) => ({ ...current, [name]: value }))
   }
 
   const handleFieldAction = async (fieldName) => {
@@ -91,11 +81,7 @@ function AuthPage({ mode }) {
     setStatus({ type: 'idle', message: '' })
 
     try {
-      const result = await sendEmailCode({
-        email: formValues.email.trim(),
-        scene: 'register',
-      })
-
+      const result = await sendEmailCode({ email: formValues.email.trim(), scene: 'register' })
       setStatus({ type: 'success', message: result?.message || '验证码已发送。' })
     } catch (error) {
       setStatus({ type: 'error', message: error instanceof Error ? error.message : '验证码发送失败。' })
@@ -134,19 +120,11 @@ function AuthPage({ mode }) {
             verifyCode: formValues.verifyCode.trim(),
             nickname: formValues.nickname.trim(),
           }
-        : {
-            account: formValues.account.trim(),
-            password: formValues.password,
-          }
+        : { account: formValues.account.trim(), password: formValues.password }
 
     try {
       const result = await content.submitAction(payload)
-
-      setStatus({
-        type: 'success',
-        message: result?.message || content.successMessage,
-      })
-
+      setStatus({ type: 'success', message: result?.message || content.successMessage })
       navigate(appRoutes.userCenter, { replace: true })
     } catch (error) {
       setStatus({
@@ -159,33 +137,41 @@ function AuthPage({ mode }) {
   }
 
   return (
-    <div className="auth-page-shell">
+    <div className="min-h-screen">
       <SiteHeader navItems={navItems} />
 
-      <main className="auth-page">
-        <section className="auth-hero section-container">
-          <div className="auth-panel auth-copy">
+      <main className="section-container grid gap-6 pb-12 pt-28 sm:pt-32 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+        <Card className="overflow-hidden rounded-[36px] border-white/70 bg-white/78">
+          <CardContent className="relative p-7 sm:p-9">
+            <div className="pointer-events-none absolute -bottom-20 right-[-8%] h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(13,110,253,0.22),rgba(13,110,253,0))]" />
             <span className="eyebrow">{content.eyebrow}</span>
-            <h1>{content.title}</h1>
-            <p>{content.description}</p>
+            <h1 className="mt-5 max-w-[11ch] text-4xl font-black leading-tight text-slate-900 sm:text-5xl lg:text-[4rem]">
+              {content.title}
+            </h1>
+            <p className="mt-4 max-w-2xl text-base leading-8 text-[color:var(--muted-strong)]">
+              {content.description}
+            </p>
 
-            <div className="auth-highlights" aria-hidden="true">
-              <div>
-                <strong>安全</strong>
-                <span>安全保障</span>
-              </div>
-              <div>
-                <strong>合规</strong>
-                <span>{mode === 'register' ? '加入我们' : '使用服务'}</span>
-              </div>
-              <div>
-                <strong>优质</strong>
-                <span></span>
-              </div>
+            <div className="mt-8 grid gap-4">
+              {[
+                ['安全', '登录、注册与账户操作走统一流程'],
+                ['合规', mode === 'register' ? '完成注册即可进入平台使用服务' : '继续管理你的代理服务与订单'],
+                ['优质', '统一的界面语言与移动端体验'],
+              ].map(([title, text]) => (
+                <div
+                  key={title}
+                  className="rounded-[24px] border border-[#0d6efd]/8 bg-[#f4f9ff]/78 px-5 py-4"
+                >
+                  <strong className="block text-base font-black text-slate-900">{title}</strong>
+                  <span className="mt-1 block text-sm leading-7 text-slate-500">{text}</span>
+                </div>
+              ))}
             </div>
-          </div>
+          </CardContent>
+        </Card>
 
-          <div className="auth-panel auth-form-card">
+        <Card className="rounded-[36px] border-white/70 bg-[linear-gradient(180deg,rgba(255,255,255,0.9),rgba(243,249,255,0.92))]">
+          <CardContent className="p-7 sm:p-8">
             <AuthForm
               fields={content.fields}
               isFieldActionBusy={isFieldActionBusy}
@@ -198,11 +184,14 @@ function AuthPage({ mode }) {
               values={formValues}
             />
 
-            <p className="auth-switch">
-              {content.switchLabel} <Link to={content.switchHref}>{content.switchText}</Link>
+            <p className="mt-5 text-center text-sm text-[color:var(--muted-strong)]">
+              {content.switchLabel}{' '}
+              <Link to={content.switchHref} className="font-bold text-[#0d6efd] no-underline">
+                {content.switchText}
+              </Link>
             </p>
-          </div>
-        </section>
+          </CardContent>
+        </Card>
       </main>
 
       <SiteFooter />

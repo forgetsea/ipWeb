@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { buttonVariants } from '../../components/ui/button-variants'
 import { addWhitelist, deleteWhitelist, fetchWhitelist } from '../../services/userCenterService'
 import { initialWhitelistForm, parseIps } from './userCenterData'
+import { TextArea, UserField, UserPanel, UserSectionHeader } from './userUi'
 import { useUserCenter } from './useUserCenter'
 
 function UserWhitelistPage() {
@@ -9,7 +11,6 @@ function UserWhitelistPage() {
 
   const refreshWhitelist = () => {
     const order = requireOrderNo()
-
     if (!order) return
 
     runAction({
@@ -22,13 +23,10 @@ function UserWhitelistPage() {
 
   const handleWhitelistSubmit = (actionType) => (event) => {
     event.preventDefault()
-
     const order = requireOrderNo()
-
     if (!order) return
 
     const ips = parseIps(whitelistForm.ipsText)
-
     if (!ips.length) {
       setStatus({ type: 'error', message: '请输入要操作的白名单 IP。' })
       return
@@ -47,47 +45,58 @@ function UserWhitelistPage() {
   }
 
   return (
-    <section className="user-panel user-two-column">
-      <div>
-        <div className="user-section-title compact">
-          <div>
-            <p>Whitelist</p>
-            <h2>IP 白名单</h2>
-          </div>
-          <button type="button" className="ghost-button" onClick={refreshWhitelist}>
-            {isSubmitting === 'whitelist-refresh' ? '刷新中...' : '刷新'}
-          </button>
-        </div>
+    <div className="grid gap-6 xl:grid-cols-[minmax(0,0.95fr)_minmax(280px,1.05fr)]">
+      <UserPanel>
+        <UserSectionHeader
+          eyebrow="Whitelist"
+          title="IP 白名单"
+          compact
+          actions={
+            <button type="button" className={buttonVariants({ variant: 'secondary' })} onClick={refreshWhitelist}>
+              {isSubmitting === 'whitelist-refresh' ? '刷新中...' : '刷新'}
+            </button>
+          }
+        />
 
-        <form className="user-form" onSubmit={handleWhitelistSubmit('add')}>
-          <label className="user-field">
-            <span>IP 地址</span>
-            <textarea
+        <form className="mt-5 grid gap-5" onSubmit={handleWhitelistSubmit('add')}>
+          <UserField label="IP 地址">
+            <TextArea
               name="ipsText"
               value={whitelistForm.ipsText}
               onChange={updateForm(setWhitelistForm)}
               placeholder="可输入多个 IP，用换行、空格、逗号或分号分隔"
             />
-          </label>
-          <div className="user-action-row">
-            <button type="submit" className="primary-button">
+          </UserField>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button type="submit" className={buttonVariants({})}>
               {isSubmitting === 'whitelist-add' ? '添加中...' : '批量添加'}
             </button>
-            <button type="button" className="ghost-button" onClick={handleWhitelistSubmit('delete')}>
+            <button
+              type="button"
+              className={buttonVariants({ variant: 'secondary' })}
+              onClick={handleWhitelistSubmit('delete')}
+            >
               {isSubmitting === 'whitelist-delete' ? '删除中...' : '批量删除'}
             </button>
           </div>
         </form>
-      </div>
+      </UserPanel>
 
-      <div className="whitelist-list">
-        {account.whitelist.length ? (
-          account.whitelist.map((ip) => <span key={ip}>{ip}</span>)
-        ) : (
-          <p className="user-note">当前订单还没有白名单记录。</p>
-        )}
-      </div>
-    </section>
+      <UserPanel>
+        <UserSectionHeader eyebrow="Current" title="当前白名单" compact />
+        <div className="mt-5 flex min-h-40 flex-wrap gap-3 rounded-[24px] bg-[#f4f9ff]/82 p-4">
+          {account.whitelist.length ? (
+            account.whitelist.map((ip) => (
+              <span key={ip} className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-800">
+                {ip}
+              </span>
+            ))
+          ) : (
+            <p className="text-sm leading-7 text-[color:var(--muted-strong)]">当前订单还没有白名单记录。</p>
+          )}
+        </div>
+      </UserPanel>
+    </div>
   )
 }
 

@@ -1,15 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Card, CardContent } from '../../components/ui/card'
+import { buttonVariants } from '../../components/ui/button-variants'
+import { Surface } from '../../components/ui/surface'
 import { fetchProfile, updatePassword, updateProfile } from '../../services/userCenterService'
 import { initialPasswordForm } from './userCenterData'
+import { TextInput, UserField, UserPanel, UserSectionHeader } from './userUi'
 import { useUserCenter } from './useUserCenter'
 
-const initialProfileState = {
-  id: '',
-  nickname: '',
-  phone: '',
-  email: '',
-  createdAt: '',
-}
+const initialProfileState = { id: '', nickname: '', phone: '', email: '', createdAt: '' }
 
 function maskPhone(phone) {
   if (!phone) return '未绑定'
@@ -19,12 +17,8 @@ function maskPhone(phone) {
 
 function formatDate(value) {
   if (!value) return '暂无'
-
   const date = new Date(value)
-  if (Number.isNaN(date.getTime())) {
-    return value
-  }
-
+  if (Number.isNaN(date.getTime())) return value
   return date.toLocaleDateString('zh-CN')
 }
 
@@ -49,7 +43,6 @@ function UserProfilePage() {
           email: data.email || '',
           createdAt: data.createdAt || '',
         }
-
         setProfile(nextProfile)
         setNicknameDraft(nextProfile.nickname)
       },
@@ -74,13 +67,9 @@ function UserProfilePage() {
 
   const handleNicknameSubmit = async (event) => {
     event.preventDefault()
-
     const result = await runAction({
       key: 'profile-nickname',
-      action: () =>
-        updateProfile({
-          nickname: nicknameDraft.trim(),
-        }),
+      action: () => updateProfile({ nickname: nicknameDraft.trim() }),
       successMessage: '用户名已更新。',
       afterSuccess: (response) => {
         setProfile((current) => ({
@@ -90,24 +79,16 @@ function UserProfilePage() {
         }))
       },
     })
-
-    if (result) {
-      setActiveDialog('')
-    }
+    if (result) setActiveDialog('')
   }
 
   const handlePasswordChange = (event) => {
     const { name, value } = event.target
-
-    setPasswordForm((current) => ({
-      ...current,
-      [name]: value,
-    }))
+    setPasswordForm((current) => ({ ...current, [name]: value }))
   }
 
   const handlePasswordSubmit = async (event) => {
     event.preventDefault()
-
     const result = await runAction({
       key: 'profile-password',
       action: () =>
@@ -118,7 +99,6 @@ function UserProfilePage() {
         }),
       successMessage: '密码已更新。',
     })
-
     if (result) {
       setPasswordForm(initialPasswordForm)
       setActiveDialog('')
@@ -126,88 +106,87 @@ function UserProfilePage() {
   }
 
   return (
-    <section className="user-panel user-profile-panel">
-      <div className="user-profile-topbar">
-        <div className="user-profile-name">
-          <span>用户名</span>
-          <strong>{profile.nickname || '未设置'}</strong>
-          <button type="button" className="user-profile-icon-button" onClick={() => setActiveDialog('nickname')}>
+    <UserPanel>
+      <div className="flex flex-col gap-4 border-b border-slate-200/70 pb-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-wrap items-center gap-4">
+          <span className="text-sm font-semibold text-slate-500">用户名</span>
+          <strong className="text-3xl font-black text-[#0f2b67]">{profile.nickname || '未设置'}</strong>
+          <button type="button" className={buttonVariants({ variant: 'secondary' })} onClick={() => setActiveDialog('nickname')}>
             修改用户名
           </button>
         </div>
-        <div className="user-profile-member">
-          <span>会员编号</span>
-          <strong>{profile.id || '--'}</strong>
+        <div className="flex flex-wrap items-center gap-4">
+          <span className="text-sm font-semibold text-slate-500">会员编号</span>
+          <strong className="text-3xl font-black text-[#0f2b67]">{profile.id || '--'}</strong>
         </div>
       </div>
 
-      <div className="user-profile-card-grid">
-        <article className="user-profile-card">
-          <span className="user-profile-card-label">手机号</span>
-          <strong className="user-profile-card-value">{maskPhone(profile.phone)}</strong>
-          <p className="user-profile-card-note">手机号来自用户资料接口，当前页面默认以只读文本形式展示。</p>
-        </article>
+      <div className="mt-6 grid gap-5 lg:grid-cols-2">
+        <Card className="rounded-[28px] border-slate-200/70 bg-[#f4f8ff]/72 shadow-none">
+          <CardContent className="grid min-h-[186px] gap-4 p-6">
+            <span className="text-base text-slate-500">手机号</span>
+            <strong className="text-4xl font-black leading-tight text-[#0f2b67]">{maskPhone(profile.phone)}</strong>
+            <p className="text-sm leading-7 text-[color:var(--muted-strong)]">
+              手机号来自用户资料接口，当前页面默认以只读文本形式展示。
+            </p>
+          </CardContent>
+        </Card>
 
-        <article className="user-profile-card user-profile-card--accent">
-          <span className="user-profile-card-label">账户资料</span>
-          <div className="user-profile-meta-grid">
+        <Card className="rounded-[28px] border-slate-200/70 bg-[linear-gradient(135deg,rgba(255,255,255,0.92),rgba(242,247,255,0.96))] shadow-none">
+          <CardContent className="grid gap-3 p-6 sm:grid-cols-2">
             {profileMeta.map((item) => (
-              <div key={item.label} className="user-profile-meta-item">
-                <span>{item.label}</span>
-                <strong>{item.value}</strong>
+              <div key={item.label} className="rounded-2xl border border-slate-200/70 bg-white/92 p-4">
+                <span className="text-sm text-slate-500">{item.label}</span>
+                <strong className="mt-2 block text-base font-black text-slate-900">{item.value}</strong>
               </div>
             ))}
-          </div>
-        </article>
+          </CardContent>
+        </Card>
 
-        <article className="user-profile-card">
-          <span className="user-profile-card-label">登录密码</span>
-          <strong className="user-profile-card-value">已加密保存</strong>
-          <p className="user-profile-card-note">点击右侧按钮后，在弹窗中输入原密码和新密码完成修改。</p>
-          <button
-            type="button"
-            className="ghost-button user-profile-action"
-            onClick={() => setActiveDialog('password')}
-          >
-            修改密码
-          </button>
-        </article>
+        <Card className="rounded-[28px] border-slate-200/70 bg-[#f4f8ff]/72 shadow-none">
+          <CardContent className="grid min-h-[186px] gap-4 p-6">
+            <span className="text-base text-slate-500">登录密码</span>
+            <strong className="text-4xl font-black leading-tight text-[#0f2b67]">已加密保存</strong>
+            <p className="text-sm leading-7 text-[color:var(--muted-strong)]">
+              点击按钮后，在弹窗中输入原密码和新密码完成修改。
+            </p>
+            <button type="button" className={buttonVariants({ variant: 'outline' })} onClick={() => setActiveDialog('password')}>
+              修改密码
+            </button>
+          </CardContent>
+        </Card>
 
-        <article className="user-profile-card">
-          <span className="user-profile-card-label">联系邮箱</span>
-          <strong className="user-profile-card-value">{profile.email || '未绑定'}</strong>
-          <p className="user-profile-card-note">邮箱同样来自资料接口，当前仅用于展示，不提供当前页修改入口。</p>
-        </article>
+        <Card className="rounded-[28px] border-slate-200/70 bg-[#f4f8ff]/72 shadow-none">
+          <CardContent className="grid min-h-[186px] gap-4 p-6">
+            <span className="text-base text-slate-500">联系邮箱</span>
+            <strong className="text-3xl font-black leading-tight text-[#0f2b67]">{profile.email || '未绑定'}</strong>
+            <p className="text-sm leading-7 text-[color:var(--muted-strong)]">
+              邮箱同样来自资料接口，当前仅用于展示，不提供本页修改入口。
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       {activeDialog ? (
-        <div className="user-profile-dialog-backdrop" role="presentation" onClick={closeDialog}>
-          <div
-            className="user-profile-dialog"
+        <div className="fixed inset-0 z-60 grid place-items-center bg-[#0f2b67]/22 p-6 backdrop-blur-sm" role="presentation" onClick={closeDialog}>
+          <Surface
+            className="w-full max-w-[460px] rounded-[28px] border-white/80 bg-white/98"
             role="dialog"
             aria-modal="true"
             aria-labelledby="profile-dialog-title"
             onClick={(event) => event.stopPropagation()}
           >
             {activeDialog === 'nickname' ? (
-              <form className="user-profile-dialog-form" onSubmit={handleNicknameSubmit}>
-                <div className="user-section-title compact">
-                  <div>
-                    <p>Profile</p>
-                    <h2 id="profile-dialog-title">修改用户名</h2>
-                  </div>
-                </div>
-
-                <label className="user-field">
-                  <span>新用户名</span>
-                  <input value={nicknameDraft} onChange={(event) => setNicknameDraft(event.target.value)} />
-                </label>
-
-                <div className="user-profile-dialog-actions">
-                  <button type="button" className="ghost-button" onClick={closeDialog}>
+              <form className="grid gap-5 p-6" onSubmit={handleNicknameSubmit}>
+                <UserSectionHeader eyebrow="Profile" title="修改用户名" compact />
+                <UserField label="新用户名">
+                  <TextInput value={nicknameDraft} onChange={(event) => setNicknameDraft(event.target.value)} />
+                </UserField>
+                <div className="flex justify-end gap-3">
+                  <button type="button" className={buttonVariants({ variant: 'secondary' })} onClick={closeDialog}>
                     取消
                   </button>
-                  <button type="submit" className="primary-button">
+                  <button type="submit" className={buttonVariants({})}>
                     {isSubmitting === 'profile-nickname' ? '提交中...' : '确认修改'}
                   </button>
                 </div>
@@ -215,58 +194,31 @@ function UserProfilePage() {
             ) : null}
 
             {activeDialog === 'password' ? (
-              <form className="user-profile-dialog-form" onSubmit={handlePasswordSubmit}>
-                <div className="user-section-title compact">
-                  <div>
-                    <p>Security</p>
-                    <h2 id="profile-dialog-title">修改密码</h2>
-                  </div>
-                </div>
-
-                <label className="user-field">
-                  <span>原密码</span>
-                  <input
-                    type="password"
-                    name="oldPassword"
-                    value={passwordForm.oldPassword}
-                    onChange={handlePasswordChange}
-                  />
-                </label>
-
-                <label className="user-field">
-                  <span>新密码</span>
-                  <input
-                    type="password"
-                    name="newPassword"
-                    value={passwordForm.newPassword}
-                    onChange={handlePasswordChange}
-                  />
-                </label>
-
-                <label className="user-field">
-                  <span>确认新密码</span>
-                  <input
-                    type="password"
-                    name="confirmPassword"
-                    value={passwordForm.confirmPassword}
-                    onChange={handlePasswordChange}
-                  />
-                </label>
-
-                <div className="user-profile-dialog-actions">
-                  <button type="button" className="ghost-button" onClick={closeDialog}>
+              <form className="grid gap-5 p-6" onSubmit={handlePasswordSubmit}>
+                <UserSectionHeader eyebrow="Security" title="修改密码" compact />
+                <UserField label="原密码">
+                  <TextInput type="password" name="oldPassword" value={passwordForm.oldPassword} onChange={handlePasswordChange} />
+                </UserField>
+                <UserField label="新密码">
+                  <TextInput type="password" name="newPassword" value={passwordForm.newPassword} onChange={handlePasswordChange} />
+                </UserField>
+                <UserField label="确认新密码">
+                  <TextInput type="password" name="confirmPassword" value={passwordForm.confirmPassword} onChange={handlePasswordChange} />
+                </UserField>
+                <div className="flex justify-end gap-3">
+                  <button type="button" className={buttonVariants({ variant: 'secondary' })} onClick={closeDialog}>
                     取消
                   </button>
-                  <button type="submit" className="primary-button">
+                  <button type="submit" className={buttonVariants({})}>
                     {isSubmitting === 'profile-password' ? '提交中...' : '确认修改'}
                   </button>
                 </div>
               </form>
             ) : null}
-          </div>
+          </Surface>
         </div>
       ) : null}
-    </section>
+    </UserPanel>
   )
 }
 

@@ -9,6 +9,7 @@ export const appRoutes = {
   packageFixed: '/package/fixed-ip',
   packageEnterprise: '/package/enterprise',
   getIp: '/getip',
+  postalCodes: '/postal-codes',
   login: '/login',
   register: '/register',
   userCenter: '/user-center',

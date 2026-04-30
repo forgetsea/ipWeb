@@ -1,6 +1,8 @@
 import { useState } from 'react'
+import { buttonVariants } from '../../components/ui/button-variants'
 import { updateAccountStatus, updatePassword } from '../../services/userCenterService'
 import { initialPasswordForm } from './userCenterData'
+import { TextInput, UserField, UserPanel, UserSectionHeader } from './userUi'
 import { useUserCenter } from './useUserCenter'
 
 function UserSecurityPage() {
@@ -34,11 +36,9 @@ function UserSecurityPage() {
 
   const handleStatusToggle = () => {
     const order = requireOrderNo()
-
     if (!order) return
 
     const nextStatus = Number(account.isLocked) === 0 ? 1 : 0
-
     runAction({
       key: 'status',
       action: () => updateAccountStatus({ ...order, isLocked: nextStatus }),
@@ -48,50 +48,53 @@ function UserSecurityPage() {
   }
 
   return (
-    <section className="user-panel">
-      <div className="user-section-title">
-        <div>
-          <p>Security</p>
-          <h2>安全设置</h2>
-        </div>
-        <button type="button" className="ghost-button" onClick={handleStatusToggle}>
-          {isSubmitting === 'status' ? '处理中...' : Number(account.isLocked) === 0 ? '关闭订单 API' : '开启订单 API'}
-        </button>
-      </div>
+    <UserPanel>
+      <UserSectionHeader
+        eyebrow="Security"
+        title="安全设置"
+        actions={
+          <button type="button" className={buttonVariants({ variant: 'secondary' })} onClick={handleStatusToggle}>
+            {isSubmitting === 'status'
+              ? '处理中...'
+              : Number(account.isLocked) === 0
+                ? '关闭订单 API'
+                : '开启订单 API'}
+          </button>
+        }
+      />
 
-      <form className="user-form user-form-grid" onSubmit={handlePasswordSubmit}>
-        <label className="user-field">
-          <span>原登录密码</span>
-          <input
+      <form className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4" onSubmit={handlePasswordSubmit}>
+        <UserField label="原登录密码">
+          <TextInput
             name="oldPassword"
             type="password"
             value={passwordForm.oldPassword}
             onChange={updateForm(setPasswordForm)}
           />
-        </label>
-        <label className="user-field">
-          <span>新登录密码</span>
-          <input
+        </UserField>
+        <UserField label="新登录密码">
+          <TextInput
             name="newPassword"
             type="password"
             value={passwordForm.newPassword}
             onChange={updateForm(setPasswordForm)}
           />
-        </label>
-        <label className="user-field">
-          <span>确认新密码</span>
-          <input
+        </UserField>
+        <UserField label="确认新密码">
+          <TextInput
             name="confirmPassword"
             type="password"
             value={passwordForm.confirmPassword}
             onChange={updateForm(setPasswordForm)}
           />
-        </label>
-        <button type="submit" className="primary-button user-form-submit">
-          {isSubmitting === 'password' ? '提交中...' : '修改登录密码'}
-        </button>
+        </UserField>
+        <div className="flex items-end">
+          <button type="submit" className={buttonVariants({ fullWidth: true })}>
+            {isSubmitting === 'password' ? '提交中...' : '修改登录密码'}
+          </button>
+        </div>
       </form>
-    </section>
+    </UserPanel>
   )
 }
 
